@@ -1,0 +1,58 @@
+<% if @matrix_entries.empty? -%>
+  No entries available -- Make sure you have created option sets and put
+  at least one option in each set.
+<% else -%>
+  <% set_columns = @matrix_entries.first.options.collect{|x| x.option_set.name}.sort -%>
+  <table>
+    <thead>
+      <tr>
+        <% set_columns.each do |col| -%>
+          <th><%= col %></th>
+        <% end -%>
+        <th>Quantity</th>
+        <th>&nbsp;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @matrix_entries.sort_by do |entry|
+        set_columns.collect do |set_name|
+          entry.options.detect{|opt| opt.option_set.name == set_name}.name
+        end.join(' '*20)
+      end.each do |entry| %>
+        <tr>
+          <% entry.options.sort_by{|y| y.option_set.name}.each do |opt| -%>
+            <td><%= opt.name %></td>
+          <% end -%>
+          <td><%= text_field "selection[#{entry.id}]", :quantity, :value => entry.quantity, :size => 3 %></td>
+          <td>
+            <%= link_to_function(
+              'Update',
+              "cart_office_process_update_option_selection_quantity(
+                #{entry.id},
+                \"#{form_authenticity_token}\"
+              )"
+            ) %>
+          </td>
+        </tr>
+      <% end -%>
+      <% unless @matrix_entries.empty? -%>
+        <tr>
+          <% @matrix_entries.first.options.length.times do -%>
+            <td>&nbsp;</td>
+          <% end -%>
+          <td>
+            <%= text_field :all_options, :quantity, :value => -1, :size => 3 %>
+          </td>
+          <td>
+            <%= link_to_function(
+              "Update All",
+              "cart_office_process_update_all_option_selection_quantity(
+                \"#{form_authenticity_token}\"
+              )"
+            ) %>
+          </td>
+        </tr>
+      <% end -%>
+    </tbody>
+  </table>
+<% end -%>

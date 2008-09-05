@@ -1,0 +1,40 @@
+8
+
+dir
+272
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder/hummingbird/trunk/config
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder
+
+
+
+2008-08-21T15:53:03.606870Z
+263
+todd
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+f60fc297-413d-0410-926a-ccc3adb698b6
+
+default_cart_config.yml
+file
+
+
+
+
+2008-08-26T14:48:41.000000Z
+752c9cca6de3bb0e49fe11bfa8e061f9
+2008-08-21T15:53:03.606870Z
+263
+todd
+

@@ -1,0 +1,52 @@
+<div id="product_images">
+
+  <ul id="image_list">
+    <% @product.thumbnails.each do |t| -%>
+      <li id="thumbnail_<%= t.id %>">
+        <%= image_tag t.image_path, :alt=>t.image_alt %>
+      </li>
+    <% end -%>
+  </ul>
+
+  <% style = @product.thumbnails.empty? ? ' style="display:none"' : '' -%>
+  <div id="photo_trash"<%= style %>>
+    Drop Here to Delete
+  </div>
+
+  <% form_for(
+    @image,
+    :url => office_product_product_images_path(@product),
+    :html => {:multipart => true}
+  ) do |f| %>
+    <p>
+      <label for="product_image_post">Upload an Image</label>
+      <%= f.file_field :filedata %>
+      <%= submit_tag "Upload" %>
+    </p>
+  <% end %>
+
+</div>
+
+<%=
+sortable_element(
+  :image_list,
+  :onUpdate => "function(){
+                 cart_office_process_image_reorder(
+                   $('image_list'),
+                   '#{form_authenticity_token}'
+                 );
+               }"
+)
+%>
+
+<%= drop_receiving_element(
+  'photo_trash',
+  :hoverclass => 'dropready',
+  :onDrop => "function(element){
+                cart_office_process_image_delete(
+                  element,
+                  '#{form_authenticity_token}'
+                );
+              }"
+) %>
+

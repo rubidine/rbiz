@@ -1,0 +1,17 @@
+# This can be called from a product edit page
+# or from the tags page
+if params[:product_id]
+  page.replace 'tag_tag_set_id', select(:tag, :tag_set_id, tag_set_select, :selected => @tag_set.id)
+  page.visual_effect :blind_up, 'create_tag_set'
+  page.visual_effect :blind_down, 'create_tag'
+  page << '$("tag_set_name").value = ""'
+else
+  page.insert_html :top,
+                   'category_list',
+                   :partial => 'category',
+                   :locals => {:category => @tag_set}
+
+  page.visual_effect :pulsate , "tag_set_#{@tag_set.id}"
+  page['tag_set_name'].value = ''
+  page['new_category'].hide
+end

@@ -1,0 +1,8 @@
+Additional Filters<br/>
+
+<% @related_tags.each do |k,v| -%>
+<strong><%= k.name %></strong>: <% v.each do |t| -%>
+<%= tag_link(t, *(@tags || [])) %>
+<% end -%>
+<br/>
+<% end -%>

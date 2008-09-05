@@ -1,0 +1,6 @@
+page.replace_html(
+  "product_active_#{params[:id]}_link",
+  @product.available? ?  '<INPUT TYPE=CHECKBOX NAME="available" checked>' : '<INPUT TYPE=CHECKBOX NAME="available">'
+)
+page["product_active_#{@product.id}_link"].show
+page["product_active_#{@product.id}_loading"].hide

@@ -1,0 +1,1 @@
+page["tag_set_#{@tag_set.id}"].remove

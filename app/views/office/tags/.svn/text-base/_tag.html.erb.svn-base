@@ -1,0 +1,5 @@
+<tr id="<%= dom_id(tag) %>">
+	<td><span class="tag_name"><%= tag.name %></span></td>
+  <td><%= link_to_function("<img src=\"/images/cart/edit.gif\" title=\"Edit\" alt=\"Edit\">", "cart_office_process_edit_tag(#{tag.id})") %></td>
+	<td><%= link_to_function("<img src=\"/images/cart/remove.gif\" title=\"Remove\" alt=\"Remove\">", "cart_office_process_delete_tag(#{tag.id}, #{h(tag.name).to_json}, \"#{form_authenticity_token}\")") %></td>
+</tr>

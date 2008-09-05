@@ -1,0 +1,88 @@
+<% form_for(:payment, :url => {:action => 'finalize_post'}) do |f| %>
+  <h3>Finalize Purchase</h3>
+  <% if @error_message -%>
+    <h4><%= @error_message %></h4>
+  <% end -%>
+
+  <div id="flashes">
+    <% flash.each do |k,v| -%>
+      <div id="flash_<%= k %>">
+        <%= v %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render :partial=>'cart/cart', :locals=>{:show_shipping=>true, :table_only=>true, :cart_line_items=>@cart.line_items} %>
+  <%= link_to 'Change Quantities', :action=>'show' %>
+
+  <h4>Ship to:</h4>
+  <p>
+    <%= @cart.shipping_address.display_name %><br/>
+    <%= @cart.shipping_address.street %><br/>
+    <%= @cart.shipping_address.city %>
+    <%= @cart.shipping_address.state %>
+    <%= @cart.shipping_address.zip %><br/>
+    <%= link_to 'Change Address', :action=>'shipping_address' %>
+  </p>
+
+  <h4>Bill to:</h4>
+  <p>
+    <%= @cart.billing_address.display_name %><br/>
+    <%= @cart.billing_address.street %><br/>
+    <%= @cart.billing_address.city %>
+    <%= @cart.billing_address.state %>
+    <%= @cart.billing_address.zip %><br/>
+    <%= link_to 'Change Address', :action=>'billing_address' %>
+  </p>
+
+  <% unless @cart.shipping_error? -%>
+
+    <h3>Payment Information</h3>
+    <div style="width:0px;height:0px;border:0px;margin:0px;padding:0px;">
+      <%= f.hidden_field :shipping_key %>
+    </div>
+    <div id="payment_selector">
+      <label for="payment_method">Select Payment Type</label>
+      <select id="payment_method" name="payment[method]" onchange="cart_select_payment_type();">
+        <option selected="selected">-- SELECT PAYMENT TYPE --</option>
+        <% CartLib.each_payment_type do |processor, type| -%>
+          <% p = processor.to_s.underscore ; t = type.to_s.underscore -%>
+          <option value="<%= p %>_<%= t %>"><%= t.gsub(/_/, ' ' ).capitalize %></option>
+        <% end -%>
+      </select>
+    </div>
+    <% CartLib.each_payment_type do |processor, type| -%>
+      <% p = processor.to_s.underscore ; t = type.to_s.underscore -%>
+      <% f.object_name = "payment_#{p}_#{t}" -%>
+      <div id="processor_<%= p %>_<%= t %>">
+        <%= render :partial => "#{p}/#{t}", :locals =>{:form => f} %>
+      </div>
+      <script type="text/javascript">
+        //<![CDATA[
+        cart_hide_payment_type("<%= p %>_<%= t %>");
+        //]]>
+      </script>
+    <% end -%>
+    <p>
+      <label for="cart_comments">Comments / Special Instructions</label>
+      <br/>
+      <%= text_area :cart, :comments, :rows => 5 -%>
+      <br/>
+      <%= submit_tag 'Purchase', :class => 'finalize_button' %>
+    </p>
+    <script type="text/javascript">
+      //<![CDATA[
+      cart_register_onload(cart_select_payment_type);
+      //]]>
+    </script>
+  <% else -%>
+    <div class="notice">
+      <h4>Shipping Error</h4>
+      <p><strong><%= @cart.error_message %></strong></p>
+      <p>
+        There was an error in calculating the price for shipping.  Please contact
+        us via telephone or email to complete your order.
+      </p>
+    </div>
+  <% end -%>
+<% end %>

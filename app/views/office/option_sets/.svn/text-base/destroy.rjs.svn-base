@@ -1,0 +1,2 @@
+@product = @option_set.product
+page.replace_html 'option_sets', :partial => 'office/products/product_options'

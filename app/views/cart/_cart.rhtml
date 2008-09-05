@@ -1,0 +1,26 @@
+<div class="cart">
+
+  <% if @cart.line_items.empty? -%>
+    <h3>There is nothing in your cart</h3>
+  <% else -%>
+    <% if !(defined?(table_only) && table_only) %>
+      <%= form_tag :action => 'update_quantities' %>
+    <% end -%>
+    <%= render(
+      :partial => 'line_item_table',
+      :locals => {
+        :editable => !(defined?(table_only) && table_only),
+        :show_shipping => (defined?(show_shipping) && show_shipping)
+      }
+    ) %>
+    <% unless defined?(table_only) and table_only -%>
+      <%= render :partial => 'cart_comments' %>
+      <div class="cart-buttons">
+        <%= submit_tag 'Update Quantites' %>
+        <%= submit_tag 'Checkout' %>
+      </div>
+      </form>
+    <% end -%>
+  <% end -%>
+
+</div>

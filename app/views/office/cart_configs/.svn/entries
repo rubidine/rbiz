@@ -1,0 +1,52 @@
+8
+
+dir
+272
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder/hummingbird/trunk/app/views/office/cart_configs
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder
+
+
+
+2008-08-19T13:38:23.710232Z
+258
+todd
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+f60fc297-413d-0410-926a-ccc3adb698b6
+
+update.rjs
+file
+
+
+
+
+2008-08-26T14:48:41.000000Z
+1bdc95915d3d05e070de3d5aa71c3d96
+2008-07-30T14:36:41.664635Z
+257
+steven
+
+index.rhtml
+file
+
+
+
+
+2008-08-26T14:48:41.000000Z
+09467df843f7b9c35bef4cd2eba7ba94
+2008-08-19T13:38:23.710232Z
+258
+todd
+

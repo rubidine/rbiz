@@ -1,0 +1,39 @@
+<%= extension_point('/common/header') %>
+
+<%= extension_point('/products/edit/before_heading') %>
+<h1>Edit <%= @product.name %></h1>
+<%= extension_point('/products/edit/after_heading') %>
+
+<%= extension_point('/products/edit/before_error_messages') %>
+<%= error_messages_for :product %>
+<%= extension_point('/products/edit/after_error_messages') %>
+
+<%= extension_point('/products/edit/before_form') %>
+<%= render :partial => 'product_form' %>
+<%= extension_point('/products/edit/after_form') %>
+
+<%= extension_point('/products/edit/before_images') %>
+<%= render :partial => 'product_images' %>
+<%= extension_point('/products/edit/after_images') %>
+
+<%= extension_point('/products/edit/before_tags') %>
+<%= render :partial => 'product_tags' %>
+<%= extension_point('/products/edit/after_tags') %>
+
+<%= extension_point('/products/edit/before_options') %>
+<%= render :partial => 'product_options' %>
+<%= extension_point('/products/edit/after_options') %>
+
+<%= extension_point('/products/edit/before_option_matrix_selector') %>
+<%= render :partial => 'product_option_matrix_selector' %>
+<%= extension_point('/products/edit/after_option_matrix_selector') %>
+
+<%= extension_point('/products/edit/before_option_matrix') %>
+<div id="option_matrix">
+  <%= @product.product_option_selections.count %> option selections
+</div>
+<%= extension_point('/products/edit/after_option_matrix') %>
+
+<%= extension_point('/products/edit/additional_content') %>
+
+<%= extension_point('/common/footer') %>

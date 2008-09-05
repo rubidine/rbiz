@@ -1,0 +1,37 @@
+<h3>Login / Register</h3>
+<p>
+Please fill out the form below.  If you are a returning customer, you should
+enter the information just as you did during your first visit.  If you are a
+first-time customer, a new account will automatically be created for you.
+<br/><br/>
+This account will be used to keep your address information private and allow
+us to contact you if there are problems with your order or payment processing.
+</p>
+
+<div id="flashes">
+  <% flash.each do |k,v| -%>
+    <div id="flash_<%= k %>">
+      <%= v %>
+    </div>
+  <% end %>
+</div>
+
+<% form_tag(:action => 'login_post') do %>
+  <p>
+  <label for="user_email">Email</label>
+  <br/>
+  <%= text_field :user, :email %>
+  <br/>
+  <br/>
+  <label for="user_passphrase">Passphrase</label>
+  <br/>
+  <%= password_field :user, :passphrase %>
+  <br/>
+  <br/>
+  <%= submit_tag 'Login / Register' %>
+  </p>
+<% end %>
+
+<p>
+<%= link_to "Forgotten Password?", :action=>'password_request' %>
+</p>

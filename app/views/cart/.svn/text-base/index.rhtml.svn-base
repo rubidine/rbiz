@@ -1,0 +1,11 @@
+<% unless @products.empty? -%>
+  <h3>Featured Products</h3>
+<% end -%>
+<% @products.each do |p| -%>
+  <div class="product_listing">
+    <h4><%= p.name %></h4>
+    <%= product_thumbnail(p) %>
+    <%= p.description %>
+    <%= product_link(p) %>
+  </div>
+<% end -%>

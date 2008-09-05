@@ -1,0 +1,80 @@
+<div id="option_sets">
+  <h4>Options</h4>
+  <% @product.option_sets.each do |set| -%>
+    <strong id="option_set_<%= set.id %>"><%= set.name %></strong>
+    <% if set.options.empty? -%>
+      <%= link_to_function(
+        image_tag('cart/remove.gif', :alt => 'Remove Option Set from Product'),
+        "cart_office_process_option_set_delete(
+          #{set.id},
+          '#{form_authenticity_token}'
+        )"
+      ) %>
+    <% end -%>
+    <% remote_form_for(
+      :option,
+      :url => office_option_set_options_url(set),
+      :update => {:failure=>'ajax_error', :success=>'_nothing'}, 
+      :failure => "$('ajax_error_container').show();" 
+    ) do |f| %>
+      <table class="options"> 
+        <thead> 
+          <tr> 
+            <th>Name</th> 
+            <th>Short Description</th> 
+            <th>Price Adjustment</th> 
+            <th>Weight Adjustment</th> 
+            <th>Sku Extension</th> 
+            <th>Collect User Input</th> 
+            <th>&nbsp;</th> 
+          </tr> 
+        </thead> 
+        <tbody> 
+          <% set.options.each do |opt| -%> 
+            <tr> 
+              <td><%= opt.name %></td> 
+              <td><%= opt.short_description %></td> 
+              <td><%= "%.2f" % opt.price_adjustment.to_f %></td> 
+              <td><%= "%.2f" % opt.weight_adjustment.to_f %></td> 
+              <td><%= opt.sku_extension %></td> 
+              <td><%= '*' if opt.has_input? %></td> 
+              <td id="option_<%= opt.id %>_delete_td">
+                <%= link_to_function( 
+                  image_tag('remove.gif', :alt => 'Remove Option from Option Set'), 
+                  "cart_office_process_option_delete(
+                    #{opt.id},
+                    '#{form_authenticity_token}'
+                  )"
+                ) %>
+              </td> 
+            </tr> 
+          <% end -%> 
+
+          <%# new option form %>
+          <tr>
+            <td><%= f.text_field :name, :value => '' %></td>
+            <td><%= f.text_field :short_description, :value => '' %></td>
+            <td><%= f.text_field :price_adjustment, :size => 5, :value => '0.00' %></td>
+            <td><%= f.text_field :weight_adjustment, :size => 5, :value => '0.00' %></td>
+            <td><%= f.text_field :sku_extension, :size =>5, :value => '' %></td>
+            <td><%= f.check_box :has_input, :value => false %></td>
+            <td><%= submit_tag 'Create' %></td>
+          </tr>
+        </tbody>
+      </table>
+    <% end -%>
+  <% end -%>
+
+  <%# new option set form %>
+  <% remote_form_for(
+    :option_set,
+    :url => office_product_option_sets_url(@product),
+    :update => {:failure=>'ajax_error', :success=>'_nothing'},
+    :failure => "$('ajax_error_container').show();"
+  ) do |f| %>
+    <div id="option_set_form">
+      <%= f.text_field :name, :value => '' %>
+      <%= submit_tag 'Create new option set' %>
+    </div>
+  <% end -%>
+</div>

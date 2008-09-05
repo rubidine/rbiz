@@ -1,0 +1,21 @@
+<% if @tags and @tags.is_a?(Array) -%>
+  <strong>Current Browsing Filters</strong><br/>
+  <%
+  sets = {}
+  tags_by_set = {}
+  @tags.each do |t|
+    sets[t.tag_set_id] ||= t.tag_set.name
+    tags_by_set[sets[t.tag_set_id]] ||= []
+    tags_by_set[sets[t.tag_set_id]] << t
+  end
+
+  tags_by_set.each do |set,tags|
+  -%>
+    <strong><%= set %></strong>:
+    <% tags.each do |t| -%>
+      <%= t.name %><%= tag_link(nil, @tags.reject{|x| x == t}) -%>
+    <% end -%>
+    <br/>
+  <% end -%>
+<% end -%>
+

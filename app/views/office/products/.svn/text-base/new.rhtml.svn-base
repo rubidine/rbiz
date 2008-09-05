@@ -1,0 +1,9 @@
+<%= extension_point('/common/header') %>
+
+<h1>Create Product</h1>
+
+<%= error_messages_for :product %>
+
+<%= render :partial => 'product_form' %>
+
+<%= extension_point('/common/footer') %>

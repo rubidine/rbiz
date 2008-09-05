@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+  <head>
+    <title><%= @title || CartConfig.get('page_title') %></title>
+    <%= javascript_include_tag :defaults %>
+    <%= javascript_include_tag 'cart/office' %>
+    <%= extension_point('/layout/head') %>
+  </head>
+  <body>
+
+    <%= error_block :ajax %>
+
+    <div id="flashes">
+      <% flash.each do |k,v| -%>
+        <div id="flash_<%= k %>">
+          <%= v %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= extension_point('/layout/before_content') %>
+    <div id="links">
+      <%= link_to 'Products', office_products_url %>
+      <%= link_to 'Tags', office_tag_sets_url %>
+      <%= link_to 'Configs', office_cart_configs_url %>
+      <%= link_to 'Customers', office_customers_url %>
+      <%= link_to 'Errors', office_error_messages_url %>
+      <%= link_to 'Coupons', office_coupons_url %>
+      <%= link_to 'Receipts', office_carts_url %>
+    </div>
+    <div id="content">
+      <%= yield %>
+    </div>
+    <%= extension_point('/layout/after_content') %>
+
+  </body>
+</html>

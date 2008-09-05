@@ -1,0 +1,83 @@
+<div id="product-tags">
+  <h4>Tags</h4>
+
+  <ul id="tags">
+    <%
+    @product.tag_activations.sort do |x,y|
+      "#{x.tag_set.name}#{x.tag.name}" <=> "#{y.tag_set.name}#{y.tag.name}"
+    end.each do |tag_act| -%>
+      <li id="tag_<%= tag_act.id %>">
+        <%= tag_act.tag.tag_set.name %>: <%= tag_act.tag.name %>
+        <%= link_to_function(
+          image_tag('cart/remove.gif', :alt => 'Remove tag from product'),
+          "cart_office_process_tag_deactivation(
+            #{tag_act.id},
+            '#{form_authenticity_token}'
+          )"
+        ) %>
+      </li>
+    <% end -%>
+  </ul>
+
+  <% remote_form_for(
+    [@product, TagSet.new],
+    :url => office_product_tag_sets_url(@product),
+    :html => {:id => 'create_tag_set', :style => 'display: none'},
+    :update => {:failure => 'ajax_error', :success => '_nothing'},
+    :failure => "new Effect.BlindDown('ajax_error_container');new Effect.Highlight('ajax_error');"
+  ) do |f| %>
+    <h5 id="tag_set_heading">Create Tag Set</h5>
+    <p>
+      Category Name: <%= f.text_field :name %>
+      <%= submit_tag "Create Category" %>
+      <%= link_to_function 'Cancel' do |page|
+        page.visual_effect('blind_down', 'create_tag')
+        page.visual_effect('blind_up', 'create_tag_set')
+      end %>
+    </p>
+  <% end %>
+
+  <% remote_form_for(
+    [@product, Tag.new],
+    :url => office_product_tags_url(@product),
+    :html => {:id => 'create_tag', :style => 'display: none'},
+    :update => {:failure => 'ajax_error', :success => '_nothing'},
+    :failure => "new Effect.BlindDown('ajax_error_container');new Effect.Highlight('ajax_error');"
+  ) do |f| %>
+    <h5 id="tag_heading">Create Tag</h5>
+    <p>
+      Category:
+      <%= f.select :tag_set_id, tag_set_select %>
+      <%= link_to_function('Create new category') do |page|
+        page.visual_effect('blind_down', 'create_tag_set')
+        page.visual_effect('blind_up', 'create_tag')
+      end %>
+      <br/>
+      Tag Name:
+      <%= f.text_field :name %>
+      <br/>
+      <%= submit_tag 'Create' %>
+      <%= link_to_function 'Cancel' do |page|
+        page.visual_effect('blind_up', 'create_tag')
+        page.visual_effect('blind_down', 'activate_tag')
+      end %>
+    </p>
+  <% end %>
+
+  <% form_remote_tag(
+    :update => {:failure => 'ajax_error', :success => '_nothing'},
+    :url => office_product_tag_activation_url(@product, TagActivation.new),
+    :html => {:id => 'activate_tag'},
+    :failure => "new Effect.BlindDown('ajax_error_container');new Effect.Highlight('ajax_error');"
+  ) do %>
+    <h5>Add Tag to Product</h5>
+    <p>
+      <%= select :tag, :id, tag_select(@product) %>
+      <%= submit_tag 'Add Tag' %>
+      <%= link_to_function 'Create new tag', nil, :id=>'tag_link' do |page|
+        page.visual_effect('blind_down', 'create_tag')
+        page.visual_effect('blind_up', 'activate_tag')
+      end %>
+    </p>
+  <% end %>
+</div>

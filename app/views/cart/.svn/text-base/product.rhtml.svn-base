@@ -1,0 +1,85 @@
+<h2 id="product_<%= @product.id %>_name"><%= @product.name %></h2>
+
+<% if !@product.available? -%>
+  <h2>This product is not available at this time.</h2>
+
+<%# if option_sets is not empty then we handle by options %>
+<% elsif @product.quantity.to_i == 0  and @product.option_sets.empty? -%>
+  <h4>This product is out of stock right now</h4>
+  <p>Please contact us regarding backorders or future availability.<p>
+
+<% else -%>
+  <% if @product.option_sets.empty? and @product.quantity.to_i != -1 and \
+    (qwt=CartConfig.get(:quantity_warning_threshold)) \
+    and @product.quantity.to_i - @product.quantity_committed.to_i < qwt
+  -%>
+    <div class="quantity_warning">
+      There are limited quantities of this product available, please act now to
+      ensure availability.
+    </div>
+  <% end -%>
+
+  <div class="product">
+    <div id="product_images">
+      <% pi = @product.default_image || @product.images.first %>
+      <% if pi %>
+        <img alt="<%= pi.image_alt %>" border="0" src="<%= image_path "#{pi.image_path}" %>"/>
+      <% else %>
+        <img alt="Image unavailable" border="0" src="/images/notfound.jpg"/>
+      <% end %>
+    </div>
+
+    <p id="product_<%= @product.id %>_description">
+      <%= @product.description %>
+    </p>
+
+    <div class="tagarea" id="tagarea">
+      <% @product.tags_by_set.each do |set, tags| -%>
+        <%= set.name %>: <%= tags.collect{|x| x.name}.join(' * ') %>
+      <% end %>
+    </div>
+
+    <% unless @product.option_sets.empty? -%>
+      <table id="option_selection">
+        <tr>
+           <% @product.option_sets.sort_by{|x| x.id}.each do |os| -%>
+             <th><%= os.name %></th>
+           <% end -%>
+           <th>Price</th>
+           <th></th>
+         </tr>
+        <% @product.product_option_selections.find(:all,:include=>:options).each do |pos| -%>
+          <tr>
+            <% oos = pos.options.sort_by{|x| x.option_set_id}.collect{|x| x.name} %>
+            <td><%= oos.join("</td><td>") %></td>
+            <td><%= (@product.attributes["price"] + pos.options.inject(0){|m,x| m + x.attributes["price_adjustment"]}).to_f / 100.0 %></td>
+            <td>
+              <% if pos.quantity == 0 %>
+                SOLD OUT!
+              <% else %>
+                <%= link_to("Buy!",
+                  :controller=>'cart',
+                  :action=>'add_to_cart',
+                  :id=>@product.id,
+                  :options=>pos.id)
+                %>
+                <% if !pos.unlimited_quantity? and (qwt = CartConfig.get(:quantity_warning_threshold)) and pos.quantity.to_i - pos.quantity_committed.to_i <= qwt -%>
+                  <span class="qty_warn">Limited Availability!</span>
+                <% end -%>
+              <% end -%>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+
+    <% else -%>
+
+      <div id="add_to_cart">
+        Price: <%= "%.2f" % @product.price %><br/>
+        <a href="<%= url_for :controller=>'cart', :action=>'add_to_cart', :id=>@product.id %>">Add to Cart</a>
+      </div>
+
+    <% end -%>
+
+  </div>
+<% end -%>

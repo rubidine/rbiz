@@ -1,0 +1,128 @@
+<%# form_for @product, :url => office_products_path do |f| %>
+<% form_for @product, :url => office_product_path(@product) do |f| %>
+  <table>
+    <tbody>
+      <tr>
+        <th>
+          <label for="product_sku"> SKU </label>
+        </th>
+        <td>
+          <%= f.text_field :sku %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label for="product_name"> Name </label>
+        </th>
+        <td>
+          <%= f.text_field :name %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label for="product_price"> Price </label>
+        </th>
+        <td>
+          <%= f.text_field :price, :value => @product.price %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label for="product_description">Description</label>
+        </th>
+        <td>
+          <%= f.text_area :description, :rows => 7 %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label for="product_weight">Weight</label>
+        </th>
+        <td>
+          <%= f.text_field :weight %>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label for="product_effective_on(1i)">Available On</label>
+        </th>
+        <td>
+          <span id="product_effective_on_wrapper">
+            <%= f.date_select :effective_on %> /
+          </span>
+          <%= f.check_box :inactive, :onclick => 'cart_office_never_effective(this);' %>
+          <label for="product_inactive">Unspecified, Not available yet</label>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label for="product_ineffective_on(1i)">Discontinued On</label>
+        </th>
+        <td>
+          <span id="product_ineffective_on_wrapper">
+            <%= f.date_select :ineffective_on %> /
+          </span>
+          <%= f.check_box :noexpire, :onclick => 'cart_office_always_effective(this);' %>
+          <label for="product_noexpire">Unspecified, Always Available</label>
+        </td>
+      </tr>
+      <tr>
+        <th>
+          <label for="product_quantity">Number In Stock</label>
+        </th>
+        <td>
+          <span id="product_quantity_wrapper">
+            <%= f.text_field :quantity %> /
+          </span>
+          <%= f.check_box :unlimited_quantity, :onclick => 'cart_office_unlimited_quantity(this)' %>
+          <label for="product_noquantity">Unlimited, Always available</label>
+        </td>
+      </tr>
+
+      <tr><td colspan="2">&nbsp;</td></tr>
+
+      <tr>
+        <th>
+          <label for="product_short_description">Short Description</label>
+        </th>
+        <td>
+          <%= f.text_field :short_description %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>
+          <label for="product_msrp">MSRP</label>
+        </th>
+        <td>
+          <%= f.text_field :msrp, :value => @product.msrp %>
+        </td>
+      </tr>
+
+      <tr>
+        <th>
+          <label for="product_extra_shipping">Extra Shipping</label>
+        </th>
+        <td>
+          <%= f.text_field :extra_shipping, :value => @product.extra_shipping %>
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          &nbsp;
+        </td>
+        <td>
+          <%= submit_tag 'Save' %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
+<script type="text/javascript">
+//<![CDATA[
+cart_office_never_effective(document.getElementById('product_inactive'));
+cart_office_always_effective(document.getElementById('product_noexpire'));
+cart_office_unlimited_quantity(document.getElementById('product_unlimited_quantity'));
+// ]]>
+</script>

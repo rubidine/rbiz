@@ -1,0 +1,31 @@
+8
+
+dir
+272
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder/hummingbird/trunk/db
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder
+
+
+
+2008-08-24T23:14:07.348790Z
+268
+todd
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+f60fc297-413d-0410-926a-ccc3adb698b6
+
+migrate
+dir
+

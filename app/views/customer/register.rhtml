@@ -1,0 +1,17 @@
+<h3>Register</h3>
+<%= error_messages_for :u, :object_name=>'User' %>
+<% form_tag do %>
+  <p>
+  <label for="user_email">Email</label>
+  <br/>
+  <%= text_field :user, :email %>
+  <br/>
+  <br/>
+  <label for="user_passphrase">Passphrase</label>
+  <br/>
+  <%= password_field :user, :passphrase %>
+  <br/>
+  <br/>
+  <%= submit_tag 'Register' %>
+  </p>
+<% end %>

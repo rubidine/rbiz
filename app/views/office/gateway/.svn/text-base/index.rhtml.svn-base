@@ -1,0 +1,21 @@
+<%= extension_point('/common/header') %>
+
+<%= extension_point('/gateway/index/before_intro') %>
+
+<div id="gateway-intro">
+  <h1>Welcome to your store!</h1>
+
+  <p>
+    Get started by using the links above to add products and perform
+    administration.  You will probably want to look at Configs and set
+    your billing and shipping information first.
+  </p>
+
+  <p>
+    Online tutorials coming soon.
+  </p>
+</div>
+
+<%= extension_point('/gateway/index/after_intro') %>
+
+<%= extension_point('/common/footer') %>

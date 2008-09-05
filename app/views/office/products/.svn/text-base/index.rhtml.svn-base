@@ -1,0 +1,119 @@
+<%= extension_point('/common/header') %>
+
+<%= will_paginate @products %>
+
+<% if @products.empty? -%>
+  <h4>
+    No products in store.
+    <%= link_to "<h4><img src=\"/images/cart/add.gif\" title=\"Add Product\"> Add Product</h4>", new_office_product_url %>
+  </h4>
+<% else -%>
+  <%= link_to "<h4><img src=\"/images/cart/add.gif\" title=\"Add Product\"> Add Product</h4>", new_office_product_url %>
+<% end %>
+
+<table id="products">
+  <thead>
+    <tr>
+      <th>Available?</th>
+      <th>Sku</th>
+      <th>Thumbnail</th>
+      <th>Name</th>
+      <th>ID</th>
+      <th>Featured?</th>
+      <th>Price</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @products.each_with_index do |p, i| -%>
+      <tr class="<%= p.available? ? 'available_' : 'unavailable_' %><%= i%2 %>" id="product_row_<%= p.id %>">
+        <td id="product_active_<%= p.id %>">
+          <%= link_to_remote(
+            p.available? ? '<INPUT TYPE=CHECKBOX NAME="available" checked>' : '<INPUT TYPE=CHECKBOX NAME="available">',
+            {
+              :update => {:success => false, :failure => 'ajax_error'},
+              :url => available_office_product_url(p),
+              :before => update_page{|page|
+                page["product_active_#{p.id}_link"].hide
+                page["product_active_#{p.id}_loading"].show
+              },
+              :failure => update_page{|page|
+                page["ajax_error_container"].show
+                page["product_active_#{p.id}_link"].show
+                page["product_active_#{p.id}_loading"].replace_html(
+                  'Unexpected error, please reload page.'
+                )
+              }
+            },
+            :id => "product_active_#{p.id}_link"
+          ) %>
+          <span id="product_active_<%= p.id %>_loading" style="display:none">
+            Loading ...
+          </span>
+        </td>
+        <td>
+          <%= p.sku %>
+        </td>
+        <td>
+          <%= product_thumbnail(p) %> 
+        </td>
+        <td>
+          <%= p.name %>
+        </td>
+        <td>
+          <%= p.id %>
+        </td>
+        <td id="product_featured_<%= p.id %>">
+          <%= link_to_remote(
+            p.featured? ? '<INPUT TYPE=CHECKBOX NAME="featured" checked>' : '<INPUT TYPE=CHECKBOX NAME="featured">',
+            {
+              :update => {:success => false, :failure => 'ajax_error'},
+              :url => featured_office_product_url(p),
+              :before => update_page{|page|
+                page["product_featured_#{p.id}_link"].hide
+                page["product_featured_#{p.id}_loading"].show
+              },
+              :failure => update_page{|page|
+                page["ajax_error_container"].show
+                page["product_featured_#{p.id}_link"].show
+                page["product_featured_#{p.id}_loading"].replace_html(
+                  'Unexpected error, please reload page.'
+                )
+              }
+            },
+            :id => "product_featured_#{p.id}_link"
+          ) %>
+          <span id="product_featured_<%= p.id %>_loading" style="display:none">
+            Loading ...
+          </span>
+        </td>
+        <td align="right">
+				<%= "$#{sprintf("%.2f", p.price)}" %>
+        </td>
+        <td>
+				<%= link_to "<img src=\"/images/cart/edit.gif\" title=\"Edit\" alt=\"Edit\">", edit_office_product_url(p) %>
+        </td>
+        <td>
+          <%= link_to(
+            "<img src=\"/images/cart/remove.gif\" title=\"Remove\" alt=\"Remove\">",
+            office_product_url(p, :method => :delete),
+            :confirm => "Really delete #{p.sku}?",
+            :method => :delete
+          ) %>
+        </td>
+        <td>
+				<%= link_to "<img src=\"/images/cart/duplicate.gif\" title=\"Duplicate\" alt=\"Duplicate\">", duplicate_office_product_url(p) %>
+        </td>
+			</tr>
+    <% end -%>
+  </tbody>
+</table>
+
+  <%= link_to "<h4><img src=\"/images/cart/add.gif\" title=\"Add Product\"> Add Product</h4>", new_office_product_url %>
+
+<%= will_paginate @products %>
+
+<%= extension_point('/common/footer') %>

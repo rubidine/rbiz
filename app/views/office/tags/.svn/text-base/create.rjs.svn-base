@@ -1,0 +1,44 @@
+# This can be called from product editing or tag editing screens
+# Process the right response by looking for params[:product_id]
+
+# Remove any previous failure
+page << <<EOF
+if ($('errorExplanation')){ $('errorExplanation').remove(); }
+EOF
+
+if params[:product_id]
+  if @tag.new_record?
+    page.insert_html :after, 'tag_heading', error_messages_for(:tag)
+  else
+    @product = Product.find params[:product_id], :include => ['tag_activations']
+    page.replace(
+      'tag_id',
+      select(
+        :tag,
+        :id,
+        tag_select(@product),
+        :selected => @tag.id
+      )
+    )
+    page.visual_effect :blind_up, 'create_tag'
+    page.visual_effect :blind_down, 'activate_tag'
+  end
+else
+  if @tag.new_record?
+    page.insert_html(
+      :bottom,
+      "tag_set_#{@tag.tag_set_id}_tags",
+      error_messages_for(:tag)
+    )
+  else
+    # TODO : clear form input
+    page.insert_html :bottom,
+                     "tag_set_#{@tag.tag_set_id}_tags",
+                     :partial => 'tag',
+                     :locals => {:tag => @tag}
+
+    page.visual_effect :pulsate, dom_id(@tag)
+
+    page["tag_name_#{@tag.tag_set_id}"].value = ''
+  end
+end

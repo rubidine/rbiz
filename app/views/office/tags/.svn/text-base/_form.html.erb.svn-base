@@ -1,0 +1,10 @@
+<% if @tag %>
+	<td colspan="3">
+	<% new_marker=1 
+end %>
+
+<% remote_form_for((@tag || Tag.new), :url => (@tag ? office_tag_path(@tag) : office_tag_set_tags_path(tag_set))) do |f| %>
+    <%= f.text_field :name, :id => "tag_name_#{tag_set.id}" %>
+    <%= f.submit(@tag ? 'Update' : 'Create New Tag') %>
+<% end %>
+<% if new_marker %> </td><% end %>

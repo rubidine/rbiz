@@ -1,0 +1,15 @@
+page.replace_html "config_#{@cart_config.id}_static", 
+  if (@cart_config.value == true)
+	  "<input type=\"checkbox\" disabled=\"true\" checked />"
+	elsif @cart_config.value
+	  html_escape(@cart_config.value)
+	elsif @cart_config.value.is_a?(String) 
+	  html_escape(@cart_config.value.inspect)
+	else
+		"<input type=\"checkbox\" disabled=\"true\"/>"
+	end
+
+page["config_#{@cart_config.id}"].toggle
+page["config_#{@cart_config.id}_static"].toggle
+page["config_#{@cart_config.id}_edit"].toggle
+page["config_#{@cart_config.id}_cancel"].toggle

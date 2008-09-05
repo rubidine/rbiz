@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title><%= @title || 'Cart' %></title>
+    <%= javascript_include_tag :defaults %>
+    <%= javascript_include_tag 'cart/cart.js' %>
+    <%= stylesheet_link_tag 'cart/cart' %>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <h3 class="title">Your Site Name</h3>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/cart/show">Your Shopping Cart</a></li>
+        </ul>
+      </div>
+      <hr class="hidden" />
+
+      <div id="main">
+        <div id="global_error" style="display: none">
+        </div>
+
+        <div id="flashes">
+          <% flash.each do |k,v| -%>
+            <div id="flash_<%= k %>">
+              <%= v %>
+            </div>
+          <% end %>
+        </div>
+
+        <div id="leftnav">
+          <%= render :partial=>'shared/leftnav' %>
+        </div>
+
+        <div id="content">
+          <%= yield %>
+        </div>
+      </div>
+      <hr class="hidden" />
+    </div>
+  </body>
+</html>

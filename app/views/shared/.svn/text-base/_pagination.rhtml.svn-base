@@ -1,0 +1,16 @@
+<% if @numpages > 1 %>
+  <% @pagination_params ||= {} -%>
+  <% if @page > 0 -%>
+    <%= link_to '&laquo;previous', @pagination_params.merge({:page=>@page-1}) %>
+  <% end -%>
+  <% 0.upto(@numpages-1) do |p| -%>
+    <% if p == @page -%>
+      <span class="activepage"><%= p+1 %></span>
+    <% else -%>
+      <%= link_to "#{p+1}", @pagination_params.merge({:page=>p}) %>
+    <% end -%>
+  <% end -%>
+  <% if @page + 1 < @numpages -%>
+    <%= link_to "next&raquo;", @pagination_params.merge({:page=>@page+1}) %>
+  <% end -%>
+<% end -%>

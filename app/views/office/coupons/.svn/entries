@@ -1,0 +1,52 @@
+8
+
+dir
+272
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder/hummingbird/trunk/app/views/office/coupons
+svn+ssh://rubidine.com/mnt/dev/svn/birdfeeder
+
+
+
+2008-07-02T05:34:26.166276Z
+224
+todd
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+f60fc297-413d-0410-926a-ccc3adb698b6
+
+index.html.erb
+file
+
+
+
+
+2008-08-26T14:48:41.000000Z
+b2a4173c4b42fe00962355876e768dcf
+2008-07-02T05:34:26.166276Z
+224
+todd
+
+new.html.erb
+file
+
+
+
+
+2008-08-26T14:48:41.000000Z
+d009ffd7845642b3c074ab98bdad877e
+2008-07-02T05:34:26.166276Z
+224
+todd
+
