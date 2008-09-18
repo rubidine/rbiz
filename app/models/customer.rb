@@ -2,15 +2,16 @@
 # addresses for quicker checkout and we can collect information to contact them
 # (in case of an erorr in the billing or shipment fulfillment)
 class Customer < ActiveRecord::Base
-  validates_uniqueness_of :email
+  has_many :addresses
+  has_many :carts
 
   validates_presence_of :email
   validates_presence_of :passphrase
 
-  attr_protected :super_user
+  validates_uniqueness_of :email
 
-  has_many :addresses
-  has_many :carts
+  attr_protected :super_user
+  named_scope :admin, :conditions => {:super_user => true}
 
   # The passphrase is stored as a one-way hash, so we compute
   # the hash here, when it is assigned.

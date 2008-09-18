@@ -2,7 +2,6 @@
 # Require libraries we need
 require 'csv'
 require 'ostruct'
-require File.join(directory, 'cart_office_authorization.rb')
 if ENV['RAILS_ENV'] == 'test'
   require 'test/spec'
   require 'mocha'

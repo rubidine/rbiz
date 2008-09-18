@@ -10,7 +10,15 @@ In your Rails project directory
 2. git clone git://github.com/rubidine/unique_tuple.git vendor/plugins/unique_tuple
 3. git clone git://github.com/rubidine/fixed_point_field.git vendor/plugins/fixed_point_field
 4. git clone git://github.com/rails/acts_as_list.git vendor/plugins/acts_as_list
-5. rake cart:migrate
-6. ???
-7. profit..  no seriously.
+5. git clone git://github.com/mislav/will_paginate.git vendor/plugins/will_paginate
+6. rake cart:migrate
+7. ???
+8. profit..  no seriously.
 
+Pre-Flight
+==========
+go to /customer/login to create an account
+use script/console to toggle super_user on customer for access to the office
+
+Go to /cart to see featured items.
+Go to /office to add products, tags, images, etc.
