@@ -1,4 +1,4 @@
-#require 'gd2'
+require 'gd2'
 module ProductImageHandler
 
   require 'fileutils'

@@ -6,7 +6,7 @@ class Office::ProductImagesController < ApplicationController
 
   def create
     @image = ProductImage.create(
-               params[:image].merge(:product_id => params[:product_id])
+               params[:product_image].merge(:product_id => params[:product_id])
              )
 
     if @image.new_record?
