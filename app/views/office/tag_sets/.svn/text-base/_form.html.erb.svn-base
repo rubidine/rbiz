@@ -1,6 +1,0 @@
-<td>
-  <% remote_form_for(@tag_set, :url => office_tag_set_url(@tag_set)) do |f| %>
-    <%= f.text_field :name %>
-    <%= f.submit "Update" %>
-  <% end %>
-</td>

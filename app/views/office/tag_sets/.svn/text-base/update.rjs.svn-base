@@ -1,3 +1,0 @@
-page.replace "tag_set_#{@tag_set.id}",
-             :partial => 'category',
-             :locals => {:category => @tag_set}

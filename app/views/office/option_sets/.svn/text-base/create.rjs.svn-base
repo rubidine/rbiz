@@ -1,9 +1,0 @@
-if @option_set.new_record?
-  page.insert_html :before, 'option_set_form', error_messages_for(:option_set)
-else
-  page.replace_html 'option_sets', :partial => 'office/products/product_options'
-  page.replace 'option_matrix_selector',
-               :partial => 'office/products/product_option_matrix_selector'
-  page.replace_html 'option_matrix',
-                 "#{@product.product_option_selections.count} option selections"
-end

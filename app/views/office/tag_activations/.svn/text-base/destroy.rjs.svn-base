@@ -1,2 +1,0 @@
-@product = @activation.product
-page.replace 'product-tags', :partial => 'office/products/product_tags'

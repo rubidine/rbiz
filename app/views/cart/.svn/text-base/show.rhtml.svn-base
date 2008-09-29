@@ -1,3 +1,0 @@
-<%= render :partial=>'cart' %>
-
-<%= link_to 'Continue Shopping', CartConfig.get(:continue_shopping_url, :checkout) || '/' %>

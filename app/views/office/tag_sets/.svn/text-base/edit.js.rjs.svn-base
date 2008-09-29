@@ -1,3 +1,0 @@
-page.replace_html "tag_set_#{@tag_set.id}",
-                  :partial => "form"
-page["tag_set_#{@tag_set.id}"].show

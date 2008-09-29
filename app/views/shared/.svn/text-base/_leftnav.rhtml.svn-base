@@ -1,6 +1,0 @@
-<% TagSet.find(:all, :include=>['tags']).each do |ts| -%>
-  <h2>Shop by <%= ts.name %></h2>
-  <% ts.tags.each do |t| -%>
-    <h3><%= tag_link(t) %></h3>
-  <% end -%>
-<% end -%>

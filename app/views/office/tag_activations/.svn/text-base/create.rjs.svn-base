@@ -1,6 +1,0 @@
-if @activation.new_record?
-  page.insert_html :after, 'tags', error_messages_for(:activation) + \
-                                   h(@activation.inspect)
-else
-  page.replace 'product-tags', :partial => 'office/products/product_tags'
-end

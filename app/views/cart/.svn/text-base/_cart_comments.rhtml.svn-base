@@ -1,5 +1,0 @@
-<p>
-  <label for="cart_comments">Your comments / special instructions</label>
-  <br/>
-  <%= text_area(:cart, :comments, :rows=>4, :cols=>30) %>
-</p>

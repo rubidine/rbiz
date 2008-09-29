@@ -1,3 +1,0 @@
-page.replace_html "tag_#{@tag.id}",
-                  :partial => 'form',
-                  :locals => {:tag => @tag, :tag_set => @tag.tag_set}

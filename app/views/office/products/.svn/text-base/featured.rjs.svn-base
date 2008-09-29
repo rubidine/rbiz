@@ -1,6 +1,0 @@
-page.replace_html(
-  "product_featured_#{params[:id]}_link",
-  @product.featured? ?  '<INPUT TYPE=CHECKBOX NAME="featured" checked>' : '<INPUT TYPE=CHECKBOX NAME="featured">'
-)
-page["product_featured_#{@product.id}_link"].show
-page["product_featured_#{@product.id}_loading"].hide
