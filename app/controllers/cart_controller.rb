@@ -386,7 +386,7 @@ class CartController < ApplicationController
       @cart.error_message = "None of the available shipping methods is appropriate."
     else
       @cart.shipping_computed_at = Time.now
-      @shipping_methods.select{|x| x.success?}.each{|x| x.cart = @cart ; x.save}
+      @shipping_methods.select{|x| x.success?}.each{|x| @cart.shipping_responses << x ; x.save}
     end
     @cart.save
   end
@@ -410,20 +410,24 @@ class CartController < ApplicationController
       return
     end
 
-    key = params[:shipping_method][:id]
-    # if only one option, always use it (so we dont show select if not needed)
-    resp = ShippingResponse.find(key)
-    if resp.nil?
-      flash[:error] = "Unable to compute shipping for '#{key}'"
-      render :action => 'finalize'
-      return
+    if @cart.shipping_responses.length == 1
+      resp = @cart.shipping_responses.first
     else
-      resp.update_attribute :selected, true
-      @cart.shipping_price = resp.cost
+      resp = @cart.shipping_responses.find_by_id(params[:shipping_method][:id])
     end
 
-    # It might not be shown, in case of only one payment method
-    # with a radiant integrtion or overridden view
+    if resp.nil?
+      flash[:error] = 'Unable to compute shipping!'
+      render :action => 'finalize'
+      return
+    end
+
+    resp.update_attribute :selected, true
+    @cart.shipping_price = resp.cost
+
+    # Payment method might not be shown, in case of only one payment method
+    # with a radiant integrtion or overridden view.  But if it is shown but
+    # not selected by customer, prompt them to select.
     if params[:payment] and params[:payment][:method] == '-- SELECT PAYMENT TYPE --'
       flash[:error] = "Select Payment Type"
       render :action => 'finalize'
@@ -432,36 +436,47 @@ class CartController < ApplicationController
 
     status = CartLib.process_payment(@cart, params)
 
-    if status.success?
-      status.selected = true
-      status.cart = @cart
-      status.save
-      @cart.error_message = nil
-      @cart.mark_as_sold
-      @cart.save
+    unless status.is_a?(PaymentResponse) and status.success?
+      # wasn't successful, possibly array of multiple failures
+      msg = nil
+      if status.is_a?(Array)
+        status.each do |stat|
+          stat.cart = @cart
+          stat.save
+        end
 
-      fr = CartLib.process_fulfillment @cart
-      @cart.fulfillment_responses = fr
-      sel = fr.select{|x| x.success }.first
-      # XXX TODO Error check (processed okay, but store admin needs to know)
-      sel.selected = true
-      sel.save
+        if status.empty?
+          msg = "Unable to process payment.  No payment module installed?"
+        end
+      end
 
-      session[:cart_id] = nil
-
-      redirect_to :controller=>'cart', :action=>'receipt', :id=>@cart.id
-      return
-    else
-      # wasn't successful
-      @cart.save
-      flash[:error] = status.message
+      msg ||= status.first.message
+      flash[:error] = msg
       ErrorMessage.create(
         :scope => 'Payment',
-        :message => "#{@cart.customer.email}: #{status.message}"
+        :message => "#{@cart.customer.email}: #{msg}"
       )
+      render :action => 'finalize'
+      return
     end
 
-    render :action => 'finalize'
+    status.selected = true
+    status.cart = @cart
+    status.save
+    @cart.error_message = nil
+    @cart.mark_as_sold
+    @cart.save
+
+    fr = CartLib.process_fulfillment @cart
+    @cart.fulfillment_responses = fr
+    sel = fr.select{|x| x.success }.first
+    # XXX TODO Error check (processed okay, but store admin needs to know)
+    sel.selected = true
+    sel.save
+
+    session[:cart_id] = nil
+
+    redirect_to :controller=>'cart', :action=>'receipt', :id=>@cart.id
   end
 
   #

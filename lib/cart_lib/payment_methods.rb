@@ -11,60 +11,72 @@ module CartLib::PaymentMethods
   # Billing gateways should override this method to perform checkout, and
   # should return an instance of CartLib::PaymentResponse
   def process_payment cart, params
-    if @payment_types.length == 1 and @payment_types.values.first.length == 1
-      processor = @payment_types.values.first.first
-      param = "#{processor.to_s.underscore}_#{@payment_types.keys.first.to_s.underscore}"
-    else
-      param = params[:payment][:method]
-      processor = nil
-      type = @payment_types.detect do |x,y|
-        y.detect do |z|
-          processor = z
-          "#{z.to_s.underscore}_#{x.to_s.underscore}" == param
-        end
-      end
-      unless type
-        msg = "#{cart.customer.email}: Unable to find payment method '#{param}'"
-        log_error "Payment", msg
-        return PaymentResponse.new(
-                 :success => false,
-                 :message => msg,
-                 :body => nil
-               )
-      end
-    end
-
-    param_scope = "payment_#{param}"
-
-    # return from this
-    begin
-      rv = @payment_processors[processor].process(
-             type,
-             cart,
-             params[param_scope]
-           )
-      unless rv.is_a?(PaymentResponse)
-        msg = "Invalid response from processor #{param}: #{rv.inspect}"
-        log_error "Payment", msg
-        PaymentResponse.new(
-          :success => false,
-          :message => msg,
-          :body => ''
-        )
-      else
-        rv
-      end
-    rescue Exception => ex
-      msg = "#{cart.customer.email}: " + 
-            "Exception Caught during processing #{param}: #{ex.message}"
+    # type will be 'credit_card' or something similar
+    unless type = select_payment_type(params)
+      msg = "#{cart.customer.email}: Unable to determine payment type"
       log_error "Payment", msg
-      PaymentResponse.new(
-        :success => false,
-        :message => msg,
-        :body => ""
-      )
+      return PaymentResponse.new(
+               :success => false,
+               :message => msg,
+               :body => params[:payment][:method].to_s
+             )
     end
-    # no more code, return from above line(s)
+
+    # processors will be [AuthorizeNet] or something similar
+    if (processors = select_payment_processors(type)).empty?
+      msg = "#{cart.customer.email}: Unable to find payment processor"
+      log_error "Payment", msg
+      return PaymentResponse.new(
+               :success => false,
+               :message => msg,
+               :body => params[:payment][:method].to_s
+             )
+    end
+
+    invalid_responses = []
+    first_valid_response = processors.detect do |pr|
+      # can be per-processor/method
+      # or global
+      pm = params["#{pr.name}_#{type}"] || params[:payment]
+      begin
+        rv = pr.process(type, cart, pm)
+      rescue Exception => ex
+        msg = "#{cart.customer.email}: " + 
+              "Exception Caught during processing: #{ex.message}"
+        rv = PaymentResponse.new(
+                :success => false,
+                :message => msg,
+                :body => ""
+              )
+        log_error "Payment", msg
+      end
+      invalid_responses << rv unless rv.success?
+      rv.success? ? rv : nil
+    end
+
+    return first_valid_response || invalid_responses
+  end
+
+  def select_payment_type params
+    if @payment_types.length == 1
+      return @payment_types.keys.first
+    end
+
+    # if a selection of which payment type to use is required, it will be like:
+    # 'authorize_net_credit_card'
+    if param = params[:payment][:method]
+      rv = @payment_types.detect do |typ,prc|
+        "#{prc.to_s.underscore}_#{typ.to_s.underscore}" == param
+      end
+      rv = rv[0] if rv
+      return rv
+    end
+  end
+
+  def select_payment_processors type
+    (@payment_types[type] || []).collect do |uniq_code|
+      @payment_processors[uniq_code]
+    end
   end
 
   # Payment processors call this method to install their hooks
@@ -95,7 +107,7 @@ module CartLib::PaymentMethods
     @payment_types ||= {}
     mod.payment_types.each do |pt|
       @payment_types[pt] ||= []
-      @payment_types[pt] << uniq_code 
+      @payment_types[pt] << uniq_code
     end
   end
 end
