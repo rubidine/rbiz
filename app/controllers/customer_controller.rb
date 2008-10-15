@@ -83,20 +83,19 @@ class CustomerController < ApplicationController
     render :action => 'login'
   end
 
-  def password_request
-    if request.post?
-      u = Customer.find_by_email(params[:user][:email])
-      if u
-        newpass = Customer.generate_random_passphrase
-        u.passphrase = newpass
-        CustomerNotifier.deliver_password_request u, newpass, request.host
-        u.reset_password = true
-        u.save
-        flash[:notice] = "A new password has been sent to your email address."
-        redirect_to :action=>'login'
-      else
-        flash[:warning] = "No account exists for #{params[:user][:email]}"
-      end
+  def password_request_post
+    u = Customer.find_by_email(params[:user][:email])
+    if u
+      newpass = Customer.generate_random_passphrase
+      u.passphrase = newpass
+      CustomerNotifier.deliver_password_request u, newpass, request.host
+      u.reset_password = true
+      u.save
+      flash[:notice] = "A new password has been sent to your email address."
+      redirect_to :action=>'login'
+    else
+      flash[:warning] = "No account exists for #{params[:user][:email]}"
+      render :action => 'password_request'
     end
   end
 
