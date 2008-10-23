@@ -44,17 +44,11 @@ module ProductImageHandler
   end
 
   def thumbnail_path original_name
-    basepath = CartConfig.get(:directory, :image) || File.join(RAILS_ROOT, 'public', 'images', 'products')
-    product_path = product.slug
-    filepath = "t-#{original_name}"
-    File.join(basepath, product_path, filepath)
+    File.join(image_base_path, product.slug, "t-#{original_name}")
   end
 
   def fullsize_path original_name
-    basepath = CartConfig.get(:directory, :image) || File.join(RAILS_ROOT, 'public', 'images', 'products')
-    product_path = product.slug
-    filepath = "#{original_name}"
-    File.join(basepath, product_path, filepath)
+    File.join(image_base_path, product.slug, original_name)
   end
 
   def write_file img, path

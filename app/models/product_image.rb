@@ -24,9 +24,9 @@ class ProductImage < ActiveRecord::Base
   def process_pending_file_data
     return unless @pending_file_data
     path = fullsize_path(@original_name)
-    self.image_path = path.gsub(/^#{RAILS_ROOT}\/public/, '')
     write_file(fullsize(@pending_file_data), path)
     create_thumbnail(@pending_file_data, @original_name)
+    self.image_path = fixup_path(path)
   end
 
   def create_thumbnail fd, oname
@@ -60,4 +60,18 @@ class ProductImage < ActiveRecord::Base
       product.save
     end
   end
+
+  def image_base_path
+    CartConfig.get(:directory, :image) \
+    || File.join(RAILS_ROOT, 'public', 'images', 'products')
+  end
+
+  def fixup_path path
+    if cc = CartConfig.get(:directory, :image)
+      path.gsub(/^#{cc.gsub(/images\/products\/?$/, '')}/, '')
+    else
+      path.gsub(/^#{RAILS_ROOT}\/public/, '')
+    end
+  end
+
 end
