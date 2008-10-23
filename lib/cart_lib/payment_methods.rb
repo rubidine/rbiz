@@ -42,7 +42,8 @@ module CartLib::PaymentMethods
         rv = pr.process(type, cart, pm)
       rescue Exception => ex
         msg = "#{cart.customer.email}: " + 
-              "Exception Caught during processing: #{ex.message}"
+              "Exception Caught during processing: #{ex.message}" +
+              "\n-- #{ex.backtrace.join("\n-- ")}"
         rv = PaymentResponse.new(
                 :success => false,
                 :message => msg,
