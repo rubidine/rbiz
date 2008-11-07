@@ -70,7 +70,7 @@ class Product < ActiveRecord::Base
   named_scope :available, {
     :conditions => [
       'effective_on <= ? AND (ineffective_on >= ? OR ineffective_on IS NULL) AND
-      quantity = -1 OR quantity > 0',
+      unlimited_quantity = TRUE OR quantity > 0',
       Date.today, Date.today
     ]
   }
@@ -164,7 +164,8 @@ class Product < ActiveRecord::Base
         "SELECT DISTINCT pt0.product_id FROM products_tags pt0 #{joins}
         JOIN products p0 ON p0.id = pt0.product_id
         WHERE #{where} AND p0.effective_on <= ?
-        AND (p0.ineffective_on IS NULL or p0.ineffective_on > ?)",
+        AND (p0.ineffective_on IS NULL or p0.ineffective_on > ?)
+        AND (unlimited_quantity = 1 OR quantity > 0)",
         Date.today, Date.today
       ]
     else

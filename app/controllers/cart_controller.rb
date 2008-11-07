@@ -401,9 +401,7 @@ class CartController < ApplicationController
     # If it has been too long since shipping was computed
     threshold = (CartConfig.get(:shipping_expiration, :payment) || 3).hours
     ca = @cart.shipping_computed_at
-    now = Time.now
-    if ca.nil? \
-    or ((ca + threshold) - now.gmt_offset) < Time.now
+    if ca.nil? or ((ca.localtime + threshold) < Time.now.localtime)
       flash[:warning] = 'Idle time exceeded.  ' +
                         'Please check shipping price and confirm payment.'
       render :action => 'finalize'
@@ -424,6 +422,8 @@ class CartController < ApplicationController
 
     resp.update_attribute :selected, true
     @cart.shipping_price = resp.cost
+
+    @cart.tax_price # compute so it will be saved, in case shipping is taxed
 
     # Payment method might not be shown, in case of only one payment method
     # with a radiant integrtion or overridden view.  But if it is shown but
@@ -469,8 +469,20 @@ class CartController < ApplicationController
 
     fr = CartLib.process_fulfillment @cart
     @cart.fulfillment_responses = fr
+
     sel = fr.select{|x| x.success }.first
+
     # XXX TODO Error check (processed okay, but store admin needs to know)
+    # log unsuccessful fulfillment response
+    unless sel
+      msg = "Unable to fulfill shipping. #{fr.first.message}"
+
+      ErrorMessage.create(
+        :scope => 'Fulfillment',
+        :message => "#{@cart.customer.email}: #{msg}"
+      )
+    end
+
     sel.selected = true
     sel.save
 

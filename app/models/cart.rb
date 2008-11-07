@@ -176,6 +176,20 @@ class Cart < ActiveRecord::Base
     self.sold_at = Time.now
   end
 
+  # return true if the cart is taxable
+  def taxable?
+    state = shipping_address.state[0,2].upcase
+    tr = CartConfig.get(:tax_rates, :payment)
+    tr and tr[state]
+  end
+
+  # return tax rate
+  def tax_rate
+    state = shipping_address.state[0,2].upcase
+    tr = CartConfig.get(:tax_rates, :payment)
+    tr[state]
+  end
+
   private
 
   def find_or_create_line_for product_or_selection, specifications
@@ -255,18 +269,17 @@ class Cart < ActiveRecord::Base
 
   # DRY, since we call for floating and fixed price numbers
   def compute_tax_price
-    omit_shipping = CartConfig.get(:omit_shipping_from_tax, :payment)
+    unless taxable? and shipping_address
+      set_fixed_point(:tax_price, 0)
+      return 0
+    end
+
     tp = taxable_total
-
-    state = shipping_address.state[0,2].upcase
-    tr = CartConfig.get(:tax_rates, :payment)[state] || 0.0
-
-    if tr and !omit_shipping
-      return write_attribute(:tax_price, nil) unless self.shipping_address
+    unless CartConfig.get(:omit_shipping_from_tax, :payment)
       tp += (read_fixed_point(:shipping_price) || 0) 
     end
 
-    tp = (tp * tr).round
+    tp = (tp * tax_rate).round
     set_fixed_point(:tax_price, tp)
 
     tp

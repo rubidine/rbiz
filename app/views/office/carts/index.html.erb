@@ -14,10 +14,10 @@
     <tbody>
       <% @carts.each do |cart| -%>
         <tr>
-          <td><%= @cart.sold_at.strftime('%b %d %H:%M') %></td>
-          <td><%= h(@cart.customer.email) %></td>
-          <td><%= @cart.grand_total(true) %></td>
-          <td><%= link_to 'Show', :controller => 'cart', :action => 'receipt', :id => cart.id %></td>
+          <td><%= cart.sold_at.strftime('%b %d %H:%M') %></td>
+          <td><%= h(cart.customer.email) %></td>
+          <td><%= cart.grand_total(true) %></td>
+          <td><%= link_to 'Show', "/cart/receipt/#{cart.id}" %></td>
         </tr>
       <% end -%>
     </tbody>

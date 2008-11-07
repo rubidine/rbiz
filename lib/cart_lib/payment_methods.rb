@@ -34,7 +34,8 @@ module CartLib::PaymentMethods
     end
 
     invalid_responses = []
-    first_valid_response = processors.detect do |pr|
+    first_valid_response = false
+    processors.detect do |pr|
       # can be per-processor/method
       # or global
       pm = params["#{pr.name}_#{type}"] || params[:payment]
@@ -52,7 +53,7 @@ module CartLib::PaymentMethods
         log_error "Payment", msg
       end
       invalid_responses << rv unless rv.success?
-      rv.success? ? rv : nil
+      rv.success? ? first_valid_response = rv : nil
     end
 
     return first_valid_response || invalid_responses
