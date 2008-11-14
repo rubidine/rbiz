@@ -40,7 +40,7 @@
               <td><%= '*' if opt.has_input? %></td> 
               <td id="option_<%= opt.id %>_delete_td">
                 <%= link_to_function( 
-                  image_tag('remove.gif', :alt => 'Remove Option from Option Set'), 
+                  image_tag('cart/remove.gif', :alt => 'Remove Option from Option Set'), 
                   "cart_office_process_option_delete(
                     #{opt.id},
                     '#{form_authenticity_token}'
@@ -58,7 +58,7 @@
             <td><%= f.text_field :weight_adjustment, :size => 5, :value => '0.00' %></td>
             <td><%= f.text_field :sku_extension, :size =>5, :value => '' %></td>
             <td><%= f.check_box :has_input, :value => false %></td>
-            <td><%= submit_tag 'Create' %></td>
+            <td><%= image_submit_tag 'cart/add.gif' %></td>
           </tr>
         </tbody>
       </table>
