@@ -197,7 +197,7 @@ class Product < ActiveRecord::Base
   #     [OPT1-2, OPT2-3],
   #     [OPT1-2, OPT2-4]
   #   ]
-  def option_matrix
+  def option_matrix_new
     sets = option_sets.find(:all, :include => ['options'])
     return [] if sets.empty?
 
@@ -222,6 +222,91 @@ class Product < ActiveRecord::Base
     # Start out with [ [*options_from_set1], [*options_from_set2] ]
     # End with [ [1from1, 1from2], [1from1, 2from2], [2from1, 1from2], .. ]
     build.call sets.collect{|x| x.options}
+  end
+
+  def option_matrix
+    return [] if option_sets.empty?
+    
+    rv = []
+
+    desired_columns = [
+      :name, :price_adjustment, :has_input, :sku_extension, :weight_adjustment, 
+      :short_description, :id,
+    ]
+
+    query_tables = []
+    option_sets.sort{|a,b| a.name <=> b.name}.each_with_index do |set, idx|
+      query_tables << ["os#{idx}", set]
+    end
+
+    selections = []
+    conditions = []
+    joins = []
+    order = []
+
+    query_tables.each do |tbl, set|
+      selections << desired_columns.collect{|col| "#{tbl}.#{col} as #{tbl}_#{col}"}.join(",")
+      conditions << "#{tbl}.option_set_id = #{set.id.to_i}"
+      joins << "options as #{tbl}"
+      order << "#{tbl}.name"
+    end
+
+    query = 'SELECT '
+    query << selections.join(',')
+    query << ' FROM '
+    query << joins.join(' JOIN ')
+    query << ' WHERE '
+    query << conditions.join(' AND ')
+    query << ' ORDER BY '
+    query << order.join(',')
+
+    p query
+
+    mega_options = Option.find_by_sql(query)
+    mega_options.each do |megaopt|
+      rv << query_tables.collect do |tbl, set| 
+              attrib = {}
+              desired_columns.each do |col|
+                attrib[col] = megaopt["#{tbl}_#{col}"]
+              end
+              o = Option.new(attrib)
+              o.option_set = set
+              o.readonly!
+              o
+            end
+
+    end
+
+    return rv
+
+=begin
+    x = Array.new
+    option_sets.count.times do |i|
+      sql_qry = "SELECT o#{i}.* "
+      sql_qry << "FROM "
+      option_sets.count.times do |j|
+        sql_qry << "options AS o#{j}"
+        if j == option_sets.count - 1 
+          sql_qry << " "
+        else
+          sql_qry << ", "
+        end
+      end
+      sql_qry << "WHERE "
+      option_sets.count.times do |j|
+        sql_qry << "o#{j}.option_set_id='#{option_sets[j].id}'"
+        if j == option_sets.count - 1
+          sql_qry << ""
+        else
+          sql_qry << " AND "
+        end
+      end
+      x[i] = Option.find_by_sql sql_qry
+    end
+    while (shifted = x[0].shift) != nil
+      puts "#{shifted.name} - #{x[1].shift.name}"
+    end
+=end
   end
 
   # {
