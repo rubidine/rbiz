@@ -227,6 +227,8 @@ class CartController < ApplicationController
   # address in case they are not the same.
   #
   def shipping_address_post
+    params[:address][:country] = params[:address][:state].split("-")[0]
+    params[:address][:state] = params[:address][:state].split("-")[1]
     @address = Address.new(params[:address])
     @address.customer = @customer
     if @address.save
@@ -269,6 +271,8 @@ class CartController < ApplicationController
   # on this credit card.
   #
   def billing_address_post
+    params[:address][:country] = params[:address][:state].split("-")[0]
+    params[:address][:state] = params[:address][:state].split("-")[1]
     @address = Address.new(params[:address])
     @address.customer = @customer
     if @address.save
