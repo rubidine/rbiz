@@ -111,3 +111,8 @@
   scope: coupons
   value: true
   basic_type: boolean
+- name: ship_to_canada
+  scope: payment
+  id: 16
+  value: 
+  basic_type: boolean
