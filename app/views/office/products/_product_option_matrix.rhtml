@@ -1,40 +1,66 @@
-<% if @matrix_entries.empty? -%>
+<% if !@full_matrix || @full_matrix.empty? -%>
   No entries available -- Make sure you have created option sets and put
   at least one option in each set.
 <% else -%>
-  <% set_columns = @matrix_entries.first.options.collect{|x| x.option_set.name}.sort -%>
+  <%# set_columns = 
+    @matrix_entries.first.options.collect{|x| x.option_set.name}.sort -%>
   <table>
     <thead>
       <tr>
-        <% set_columns.each do |col| -%>
-          <th><%= col %></th>
+        <% @full_matrix.first.each do |opt| -%>
+        <%# set_columns.each do |col| -%>
+          <th><%= opt.option_set.name %></th>
         <% end -%>
         <th>Quantity</th>
         <th>&nbsp;</th>
       </tr>
     </thead>
     <tbody>
-      <% @matrix_entries.sort_by do |entry|
-        set_columns.collect do |set_name|
-          entry.options.detect{|opt| opt.option_set.name == set_name}.name
-        end.join(' '*20)
-      end.each do |entry| %>
+      <% @matrix_entries.each do |possible_selection| 
+      -%>
         <tr>
-          <% entry.options.sort_by{|y| y.option_set.name}.each do |opt| -%>
-            <td><%= opt.name %></td>
+          <% possible_selection.options.each do |option| -%>
+            <td><%= option.name %></td>
           <% end -%>
-          <td><%= text_field "selection[#{entry.id}]", :quantity, :value => entry.quantity, :size => 3 %></td>
-          <td>
-            <%= link_to_function(
-              'Update',
-              "cart_office_process_update_option_selection_quantity(
-                #{entry.id},
-                \"#{form_authenticity_token}\"
-              )"
-            ) %>
-          </td>
+          <% 
+            quantity_object = @matrix_entries.detect{|sel| 
+              possible_selection.options.inject(true){ |m,option| 
+                m && sel.option_ids.include?(option.id)
+              } 
+            }
+          -%>
+            <% puts "quantity object = #{quantity_object}" %>
+          <% if quantity_object %>
+            <td>
+              <span id="<%= quantity_object.id %>_quantity_wrapper">
+                <%= text_field(
+                  "selection[#{quantity_object.id}]",
+                  :quantity,
+                  :value => quantity_object.quantity,
+                  :size => 3
+                ) %>/
+              </span>
+              <%= check_box(
+                :unlimited_quantity,
+                :onclick => "cart_office_unlimited_quantity(this, #{quantity_object.id})"
+              ) %>
+            </td>
+            <td>
+              <%= link_to_function(
+                'Update',
+                "cart_office_process_update_option_selection_quantity(
+                  #{quantity_object.id},
+                  \"#{form_authenticity_token}\"
+                )"
+              ) %>
+            </td>
+          <% else %>
+            <td> None yet </td>
+            <td> Update Link </td>
+          <% end %>
         </tr>
       <% end -%>
+
       <% unless @matrix_entries.empty? -%>
         <tr>
           <% @matrix_entries.first.options.length.times do -%>

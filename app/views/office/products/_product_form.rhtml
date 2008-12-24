@@ -74,7 +74,7 @@
           <span id="product_quantity_wrapper">
             <%= f.text_field :quantity %> /
           </span>
-          <%= f.check_box :unlimited_quantity, :onclick => 'cart_office_unlimited_quantity(this)' %>
+          <%= f.check_box :unlimited_quantity, :onclick => 'cart_office_unlimited_quantity(this, "product")' %>
           <label for="product_noquantity">Unlimited, Always available</label>
         </td>
       </tr>
@@ -123,6 +123,6 @@
 //<![CDATA[
 cart_office_never_effective(document.getElementById('product_inactive'));
 cart_office_always_effective(document.getElementById('product_noexpire'));
-cart_office_unlimited_quantity(document.getElementById('product_unlimited_quantity'));
+cart_office_unlimited_quantity(document.getElementById('product_unlimited_quantity'), "product");
 // ]]>
 </script>

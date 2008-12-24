@@ -316,8 +316,8 @@ cart_office_always_effective(checkbox) {
 }
 
 function
-cart_office_unlimited_quantity(checkbox) {
-  var emt = document.getElementById("product_quantity_wrapper");
+cart_office_unlimited_quantity(checkbox, id) {
+  var emt = document.getElementById(id + "_quantity_wrapper");
   if (checkbox.checked) {
     emt.style.display = 'none';
   } else {

@@ -197,36 +197,14 @@ class Product < ActiveRecord::Base
   #     [OPT1-2, OPT2-3],
   #     [OPT1-2, OPT2-4]
   #   ]
-  def option_matrix_new
-    sets = option_sets.find(:all, :include => ['options'])
-    return [] if sets.empty?
 
-    # start with the last option set and make an array of options
-    # for each option coming forward, take what was generated farther back
-    # and add it as an appendage of each option in the current set
-    build = lambda do |list|
-      tail = list.dup
-      head = tail.shift
-      appendage = tail.empty? ? [[]] : build.call(tail)
-      rv = []
-      # collect will return an array 
-      # so this nested collect returns an array of arrays
-      head.collect do |he|
-        appendage.collect do |ae|
-          rv << ([he] + ae)
-        end
-      end
-      rv
+  def option_matrix exclude_set = nil 
+    return [] if option_sets.empty?
+    my_option_sets = option_sets.dup
+    if exclude_set  
+      my_option_sets.delete(exclude_set) 
     end
 
-    # Start out with [ [*options_from_set1], [*options_from_set2] ]
-    # End with [ [1from1, 1from2], [1from1, 2from2], [2from1, 1from2], .. ]
-    build.call sets.collect{|x| x.options}
-  end
-
-  def option_matrix
-    return [] if option_sets.empty?
-    
     rv = []
 
     desired_columns = [
@@ -235,7 +213,7 @@ class Product < ActiveRecord::Base
     ]
 
     query_tables = []
-    option_sets.sort{|a,b| a.name <=> b.name}.each_with_index do |set, idx|
+    my_option_sets.sort{|a,b| a.name <=> b.name}.each_with_index do |set, idx|
       query_tables << ["os#{idx}", set]
     end
 
@@ -260,8 +238,6 @@ class Product < ActiveRecord::Base
     query << ' ORDER BY '
     query << order.join(',')
 
-    p query
-
     mega_options = Option.find_by_sql(query)
     mega_options.each do |megaopt|
       rv << query_tables.collect do |tbl, set| 
@@ -271,6 +247,7 @@ class Product < ActiveRecord::Base
               end
               o = Option.new(attrib)
               o.option_set = set
+              o.id = attrib[:id]
               o.readonly!
               o
             end
@@ -278,35 +255,6 @@ class Product < ActiveRecord::Base
     end
 
     return rv
-
-=begin
-    x = Array.new
-    option_sets.count.times do |i|
-      sql_qry = "SELECT o#{i}.* "
-      sql_qry << "FROM "
-      option_sets.count.times do |j|
-        sql_qry << "options AS o#{j}"
-        if j == option_sets.count - 1 
-          sql_qry << " "
-        else
-          sql_qry << ", "
-        end
-      end
-      sql_qry << "WHERE "
-      option_sets.count.times do |j|
-        sql_qry << "o#{j}.option_set_id='#{option_sets[j].id}'"
-        if j == option_sets.count - 1
-          sql_qry << ""
-        else
-          sql_qry << " AND "
-        end
-      end
-      x[i] = Option.find_by_sql sql_qry
-    end
-    while (shifted = x[0].shift) != nil
-      puts "#{shifted.name} - #{x[1].shift.name}"
-    end
-=end
   end
 
   # {

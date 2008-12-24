@@ -57,7 +57,7 @@ class ProductOptionSelection < ActiveRecord::Base
       ]
     else
       rv = find_by_sql "SELECT DISTINCT product_option_selection_id " +
-                       "FROM options_product_option_selections"
+                       "FROM options_product_option_selections" 
     end
     rv.collect{|x| x.product_option_selection_id}
   end

@@ -11,13 +11,12 @@ class Office::OptionsController < ApplicationController
 
     unless @option.new_record?
       @matrix_entries = []
-      @product.option_matrix.reject do |x|
-        x.any?{|y| y.option_set_id == @option_set.id and y != @option}
-      end.each do |sel|
+      @product.option_matrix(@option_set).each do |sel|
         pos = @product.product_option_selections.create(:quantity=>0)
         sel.each do |opt|
-          pos.options << opt
+          pos.options << Option.find(opt.id)
         end
+        pos.options << @option
         pos.save
         @matrix_entries << pos
       end
