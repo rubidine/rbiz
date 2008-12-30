@@ -153,6 +153,7 @@ cart_office_process_option_delete(option_id, authenticity_token) {
 function
 cart_office_process_update_option_selection_quantity(selection_id, auth_token) {
   var element=  $("selection_" + selection_id + "_quantity");
+  var element_u=  $("selection_" + selection_id + "_unlimited_quantity");
   var spin = show_spinner(element);
   var url = "/office/product_option_selections/" + selection_id;
   dispatch(
@@ -161,6 +162,7 @@ cart_office_process_update_option_selection_quantity(selection_id, auth_token) {
       parameters: {
         _method: 'put',
         'product_option_selection[quantity]': $F(element),
+        'product_option_selection[unlimited_quantity]': $F(element_u),
         authenticity_token: encodeURIComponent(auth_token)
       },
       spinner: spin

@@ -11,7 +11,7 @@
         <%# set_columns.each do |col| -%>
           <th><%= opt.option_set.name %></th>
         <% end -%>
-        <th>Quantity</th>
+        <th>Quantity / Unlimited</th>
         <th>&nbsp;</th>
       </tr>
     </thead>
@@ -29,19 +29,23 @@
               } 
             }
           -%>
-            <% puts "quantity object = #{quantity_object}" %>
           <% if quantity_object %>
             <td>
-              <span id="<%= quantity_object.id %>_quantity_wrapper">
+              <span id="<%= quantity_object.id %>_quantity_wrapper" 
+                <%= if quantity_object.unlimited_quantity
+                  'style="display:none"'
+                end %>>
                 <%= text_field(
                   "selection[#{quantity_object.id}]",
                   :quantity,
                   :value => quantity_object.quantity,
                   :size => 3
-                ) %>/
+                ) %>&nbsp;/
               </span>
               <%= check_box(
+                "selection[#{quantity_object.id}]",
                 :unlimited_quantity,
+                :checked => quantity_object.unlimited_quantity ? 'checked' : '',
                 :onclick => "cart_office_unlimited_quantity(this, #{quantity_object.id})"
               ) %>
             </td>
