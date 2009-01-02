@@ -108,8 +108,8 @@ class Office::ProductsController < ApplicationController
     @full_matrix = @product.option_matrix
     options = params[:option].collect{|x,y| y[:option_id]}
     options.reject!{|x| x.empty?}
-    @matrix_entries = ProductOptionSelection.ids_for_option_ids(options)
-    @matrix_entries.collect!{|x| ProductOptionSelection.find(x)}
+    @matrix_entries = Variation.ids_for_option_ids(options)
+    @matrix_entries.collect!{|x| Variation.find(x)}
     @matrix_entries.reject!{|x| x.product_id != @product.id}
   end
 

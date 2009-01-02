@@ -1,8 +1,8 @@
-# A ProductOptionSelection encodes availability data for a Product and a set
+# A Variation encodes availability data for a Product and a set
 # of Options.  For any Product, each OptionSet should have one Option present
-# in a ProductOptionSelection.  Given a ProductOptionSelection you can know
+# in a Variation.  Given a Variation you can know
 # what product someone is buying, and what options they selected to be on it.
-class ProductOptionSelection < ActiveRecord::Base
+class Variation < ActiveRecord::Base
   belongs_to :product
   has_and_belongs_to_many :options
   has_many :line_items
@@ -42,24 +42,24 @@ class ProductOptionSelection < ActiveRecord::Base
       where = ""
       option_ids.each_with_index do |x,index|
         if index != 0
-          joins << " JOIN options_product_option_selections opos#{index} " +
-                   "ON opos0.product_option_selection_id = " +
-                   "opos#{index}.product_option_selection_id"
+          joins << " JOIN options_variations opos#{index} " +
+                   "ON opos0.variation_id = " +
+                   "opos#{index}.variation_id"
         end
         where << (!where.empty? ? ' AND ' : '')
         where << " opos#{index}.option_id = #{x.to_i} "
       end
       rv = find_by_sql [
-        "SELECT DISTINCT opos0.product_option_selection_id
-        FROM options_product_option_selections opos0
+        "SELECT DISTINCT opos0.variation_id
+        FROM options_variations opos0
         #{joins}
         WHERE #{where}"
       ]
     else
-      rv = find_by_sql "SELECT DISTINCT product_option_selection_id " +
-                       "FROM options_product_option_selections" 
+      rv = find_by_sql "SELECT DISTINCT variation_id " +
+                       "FROM options_variations" 
     end
-    rv.collect{|x| x.product_option_selection_id}
+    rv.collect{|x| x.variation_id}
   end
 
   private

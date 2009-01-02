@@ -77,7 +77,7 @@ ActionController::Routing::Routes.define_cart_routes do |map|
 
     office.resources :options
 
-    office.resources :product_option_selections
+    office.resources :variations
 
     office.resources :cart_configs
 

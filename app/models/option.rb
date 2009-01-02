@@ -4,7 +4,7 @@
 # Options can incur extra weight or cost to be added to the cost of the product.
 class Option < ActiveRecord::Base
   belongs_to :option_set
-  has_and_belongs_to_many :product_option_selections
+  has_and_belongs_to_many :variations
   has_many :option_specifications
 
   validates_presence_of :option_set

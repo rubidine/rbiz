@@ -30,7 +30,7 @@
 
 <%= extension_point('/products/edit/before_option_matrix') %>
 <div id="option_matrix">
-  <%= @product.product_option_selections.count %> option selections
+  <%= @product.variations.count %> variations
 </div>
 <%= extension_point('/products/edit/after_option_matrix') %>
 

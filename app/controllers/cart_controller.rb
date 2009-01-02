@@ -75,7 +75,7 @@ class CartController < ApplicationController
   #   Take out the Error-redirect-return cycle and replace it with exceptions
   def add_to_cart
     product = Product.find(params[:id])
-    product_option_selection = nil
+    variation = nil
 
     # XXX make this skinny!
 
@@ -103,16 +103,16 @@ class CartController < ApplicationController
     # make sure we have option specification (variant) if we need it
     # (and cache up the individual options)
     if params[:options]
-      product_option_selection = product.product_option_selections.find_by_id(
+      variation = product.variations.find_by_id(
                                    params[:options].to_i,
                                    :include => [:options]
                                  )
     end
 
     # XXX TEST IF THIS CAN GO AWAY AND BE HANDLED BY Cart#add
-    # TODO: could we mark a product_option_selection as default
+    # TODO: could we mark a variation as default
     # and try to use it if there are missing options?
-    if product.has_options? and !product_option_selection
+    if product.has_options? and !variation
       flash[:warning] = "Cannot add product to cart without specifying options."
       session[:params] = params.dup
       redirect_to :action => 'error'
@@ -124,8 +124,8 @@ class CartController < ApplicationController
     # be bogus or lacking in something we need to be set.  We match up the
     # iteration technique we use to retrieve them.
     specs = {}
-    if product_option_selection
-      reqd_options = product_option_selection.options.select{|x| x.has_input?}
+    if variation 
+      reqd_options = variation.options.select{|x| x.has_input?}
       reqd_options.each do |x|
         str = params[:option_input] ? params[:option_input][x.id.to_s].to_s : ''
         specs[x] = str
@@ -135,7 +135,7 @@ class CartController < ApplicationController
     # make the line item
     qty = (params[:quantity] || '1').gsub(/[^\d]+/, '').to_i
     qty = 1 unless qty >= 1
-    line_item = @cart.add((product_option_selection || product), qty, specs)
+    line_item = @cart.add((variation || product), qty, specs)
     unless line_item
       flash[:warning] = "Unable to create line item for product.  " +
                         "#{@cart.error_message}"

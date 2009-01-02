@@ -1,7 +1,7 @@
 # The Cart is what makes it go around.  You have one in your session, and if
 # you log in, it finds any you tried to have earlier and didn't check out.
-# Products are held in the cart by line items, which have a product, and option
-# selection and user-input option specifications (if applicable for that
+# Products are held in the cart by line items, which have a product, and 
+# variation and user-input option specifications (if applicable for that
 # product), and the quantity requested of that product.
 #
 # If an error occurs, check the error_message attribute for a human-readable
@@ -199,12 +199,12 @@ class Cart < ActiveRecord::Base
   end
 
   # Used throughout to get line item to operate on.
-  # Find a line item for the given product or option selection.
+  # Find a line item for the given product or variation.
   def find_line_item_for product_or_selection, specifications
 
     is_product = product_or_selection.is_a?(Product)
 
-    msg = is_product ? :product_id : :product_option_selection_id
+    msg = is_product ? :product_id : :variation_id
     id = product_or_selection.id
     li = line_items.detect{|x| x.send(msg) == id}
  
@@ -235,7 +235,7 @@ class Cart < ActiveRecord::Base
     li = line_items.create(
            :quantity => quantity,
            :product => product,
-           :product_option_selection => selection
+           :variation => selection
          )
 
     if li.new_record?

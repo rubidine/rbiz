@@ -51,7 +51,7 @@ module FixtureReplacement
     o.name = 'test_option'
 	end
 
-  attributes_for :product_option_selection do |o|
+  attributes_for :variation do |o|
     o.quantity = 7
     o.quantity_committed = 0
 	end

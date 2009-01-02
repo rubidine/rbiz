@@ -12,7 +12,7 @@ class Office::OptionsController < ApplicationController
     unless @option.new_record?
       @matrix_entries = []
       @product.option_matrix(@option_set).each do |sel|
-        pos = @product.product_option_selections.create(:quantity=>0)
+        pos = @product.variations.create(:quantity=>0)
         sel.each do |opt|
           pos.options << Option.find(opt.id)
         end
@@ -25,7 +25,7 @@ class Office::OptionsController < ApplicationController
 
   def destroy
     @option = Option.find(params[:id])
-    opos = @option.product_option_selections.dup
+    opos = @option.variations.dup
     @option.destroy
     opos.each{|x| x.destroy}
   end

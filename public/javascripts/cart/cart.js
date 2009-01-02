@@ -2,22 +2,34 @@ var cart_total_without_shipping = null;
 var cart_tax_without_shipping = null;
 
 /*
- * This is going to be keyed in by our radius tag.
+ * Because IE isn't DOM level 3 compliant
  */
-var option_selections = {};
+function
+cart_element_text(element) {
+  if (element.innerText) {
+    return element.innerText;
+  } else {
+    return element.textContent;
+  }
+}
 
 /*
- * This is a helper method when using the dropdown selections.
+ * This is going to be keyed in by our radius tag.
+ */
+var variations = {};
+
+/*
+ * This is a helper method when using the dropdown variations.
  * product_id is a number
  */
 function
 make_selection(product_id) {
   // load variables we need
 
-  // get the tree of options selections
+  // get the tree of variations 
   var data = eval("product_" + product_id + "_data");
   if (!data) {
-    alert("missing varialbe: product_" + product_id + "_keys");
+    alert("missing variable: product_" + product_id + "_keys");
     return;
   }
 
@@ -36,17 +48,17 @@ make_selection(product_id) {
 
   var d = data;
   var o2 = []
-  var options = option_selections[product_id];
+  var options = variations[product_id];
 
   // if somebody moves a dropdown to '--SELECT--'
   // then d can become undefined, we handle it after we 
-  // remove option selection farther down the page and
+  // remove variations farther down the page and
   // remove the buy link
   var cur_opt = null;
   while ((cur_opt = options.shift()) && d) {
     d = d[cur_opt];
     if (d) {
-      // show the text field for this option if the optoin supports it
+      // show the text field for this option if the option supports it
       if (d.x_has_user_input) {
         var n = names[o2.length];
         n = n.replace(/[^\w]/g, '');
@@ -71,7 +83,7 @@ make_selection(product_id) {
     o2.push(cur_opt);
   }
   options = o2;
-  option_selections[product_id] = options;
+  variations[product_id] = options;
 
   // update the price on the page
   var ename = "price_" + product_id;
@@ -83,16 +95,16 @@ make_selection(product_id) {
     ele.appendChild(document.createTextNode(toMoney(price)));
   }
 
-  // If d is a number it is the product option selection id
+  // If d is a number it is the variation id
   // so we are done and show the buy link.
-  // This loop is for other cases -- more option selections.
+  // This loop is for other cases -- more variations.
   if (typeof(d) != 'number') {
     // remove any selects that may be on the page that are for options
     // farther down the line
     for (var name_idx = options.length ; name_idx < names.length ; name_idx++) {
       var fn = names[name_idx];
       fn = fn.replace(/[^\w]/g, '');
-      fn = 'selection_' + product_id + '_' + fn;
+      fn = 'variation_' + product_id + '_' + fn;
       var fnd = document.getElementById( fn );
       while ( fnd.hasChildNodes() ) {
         fnd.removeChild( fnd.firstChild );
@@ -110,7 +122,7 @@ make_selection(product_id) {
 
     names = names[options.length];
     names = names.replace(/[^\w]/g, '');
-    names = "selection_" + product_id + "_" + names;
+    names = "variation_" + product_id + "_" + names;
     var node = document.getElementById( names );
     if (!node) {
       alert("No element: " + names);
@@ -135,11 +147,11 @@ make_selection(product_id) {
     var fx = function(){
       var no = [];
       for (var i=0 ; i<options.length; i++) {
-        no.push(option_selections[product_id][i]);
+        no.push(variations[product_id][i]);
       };
       var sl = document.getElementById(names+'_select');
       no.push(sl.options[sl.selectedIndex].value);
-      option_selections[product_id] = no;
+      variations[product_id] = no;
       make_selection(product_id);
     };
     Event.observe( names + '_select' , 'change', fx, false);
@@ -203,7 +215,7 @@ cart_compute_total() {
       cart_update_grand_total("ERROR - Unable to find grand total element");
       return;
     }
-    var re = gte.textContent.strip().match(/^\$?(\d+\.\d\d)/)
+    var re = cart_element_text(gte).strip().match(/^\$?(\d+\.\d\d)/)
     if (!re) {
       cart_update_grand_total("ERROR - Unable to parse total");
       return;
@@ -242,7 +254,7 @@ cart_compute_total() {
         cart_update_grand_total("ERROR - Unable to find tax element");
         return;
       }
-      var re = tx.textContent.strip().match(/^\$?(\d+\.\d\d)/);
+      var re = cart_element_text(tx).strip().match(/^\$?(\d+\.\d\d)/);
       if (!re) {
         cart_update_grand_total("ERROR - Unable to parse tax");
         return;

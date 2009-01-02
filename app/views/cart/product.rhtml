@@ -40,7 +40,7 @@
     </div>
 
     <% unless @product.option_sets.empty? -%>
-      <table id="option_selection">
+      <table id="variation">
         <tr>
            <% @product.option_sets.sort_by{|x| x.id}.each do |os| -%>
              <th><%= os.name %></th>
@@ -48,7 +48,7 @@
            <th>Price</th>
            <th></th>
          </tr>
-        <% @product.product_option_selections.find(:all,:include=>:options).each do |pos| -%>
+        <% @product.variations.find(:all,:include=>:options).each do |pos| -%>
           <tr>
             <% oos = pos.options.sort_by{|x| x.option_set_id}.collect{|x| x.name} %>
             <td><%= oos.join("</td><td>") %></td>

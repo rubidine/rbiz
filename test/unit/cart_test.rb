@@ -53,33 +53,33 @@ context 'An empty cart, a product with options' do
     @product_sel = create_scoped_product
     @option_set = create_option_set(:product => @product_sel)
     @option = create_option(:option_set => @option_set)
-    @product_option_selection = new_product_option_selection(:product => @product_sel)
-    @product_option_selection.options << @option
-    @product_option_selection.save
+    @variation = new_variation(:product => @product_sel)
+    @variation.options << @option
+    @variation.save
   end
 
   it 'should add productsthrough the add method (default quantity)' do
-    li = @cart.add(@product_option_selection)
+    li = @cart.add(@variation)
     assert_equal 1, li.quantity
   end
 
   it 'should add products through the add method with quantity != 1' do
     quantity = 3
-    li = @cart.add(@product_option_selection, quantity)
+    li = @cart.add(@variation, quantity)
     assert_equal quantity, li.quantity
   end
 
   it 'should NOT add products with not enough quantity (tracked on option)' do
     quantity = 50
-    li = @cart.add(@product_option_selection, quantity)
+    li = @cart.add(@variation, quantity)
     assert_kind_of FalseClass, li
   end
 
   it 'should NOT add products with not enough quantity (tracked on product)' do
     # tell it to look on product
-    @product_option_selection.update_attribute(:track_quantity_on_product, true)
+    @variation.update_attribute(:track_quantity_on_product, true)
 
-    li = @cart.add(@product_option_selection, 50)
+    li = @cart.add(@variation, 50)
     assert_kind_of FalseClass, li
   end
 
@@ -203,26 +203,26 @@ context 'A cart with a product with options and specifications' do
     @option_set = create_option_set(:product => @product_sel)
     @option = create_option(:option_set => @option_set, :has_input => true)
 
-    @product_option_selection = new_product_option_selection(:product => @product_sel) 
-    @product_option_selection.options << @option 
-    @product_option_selection.save
+    @variation = new_variation(:product => @product_sel) 
+    @variation.options << @option 
+    @variation.save
   end 
  
   it 'should add specifications to line item when added' do 
-    li = @cart.add(@product_option_selection, 1, {@option => 'TEST1'}) 
+    li = @cart.add(@variation, 1, {@option => 'TEST1'}) 
     assert_equal 1, li.option_specifications.length 
     assert_equal 'TEST1', li.option_specifications.first.option_text 
   end 
  
   it 'should update quantity of line item when adding with same specs' do 
-    li = @cart.add(@product_option_selection, 1, {@option => 'TEST1'}) 
-    li2 = @cart.add(@product_option_selection, 1, {@option => 'TEST1'}) 
+    li = @cart.add(@variation, 1, {@option => 'TEST1'}) 
+    li2 = @cart.add(@variation, 1, {@option => 'TEST1'}) 
     assert_equal li, li2
   end 
  
   it 'should make new line item when adding with different specs' do 
-    @cart.add(@product_option_selection, 1, {@option => 'TEST1'}) 
-    @cart.add(@product_option_selection, 1, {@option => 'NOT SAME'}) 
+    @cart.add(@variation, 1, {@option => 'TEST1'}) 
+    @cart.add(@variation, 1, {@option => 'NOT SAME'}) 
     assert_equal 2, @cart.line_items.length 
   end 
 end 

@@ -187,28 +187,28 @@ context 'A line item with price adjustment options' do
                  :has_input => true, :price_adjustment => 0.30
                )
     
-    @product_option_selection = ProductOptionSelection.new(
+    @variation = Variation.new(
                                   :product => @product,
                                   :quantity => 10,
                                   :quantity_committed => 0
                                 )
-    @product_option_selection.options << @option1
-    @product_option_selection.save
+    @variation.options << @option1
+    @variation.save
 
     @line_item = LineItem.new(
                    :cart => Cart.new,
                    :product => @product,
-                   :product_option_selection => @product_option_selection,
+                   :variation => @variation,
                    :quantity => 2
                  )
 
-    @product_option_selection2 = ProductOptionSelection.new(
+    @variation2 = Variation.new(
                                    :product => @product,
                                    :unlimited_quantity => true,
                                    :quantity_committed => 0
                                  )
-    @product_option_selection2.options << @option2
-    @product_option_selection2.save
+    @variation2.options << @option2
+    @variation2.save
     
     @option_specification2 = OptionSpecification.create!(
                               :option => @option2,
@@ -217,7 +217,7 @@ context 'A line item with price adjustment options' do
     @line_item_spec2 = LineItem.new(
                         :cart => Cart.new,
                         :product => @product,
-                        :product_option_selection => @product_option_selection2,
+                        :variation => @variation2,
                         :quantity => 2
                       )
     @line_item_spec2.option_specifications << @option_specification2
@@ -235,9 +235,9 @@ context 'A line item with price adjustment options' do
     assert_equal 1, @line_item_spec2.option_specifications.length
   end
 
-  it 'should store quantity committed on the option selection' do
+  it 'should store quantity committed on the variation' do
     @line_item.quantity = 7
-    assert_equal 7, @line_item.product_option_selection.quantity_committed
+    assert_equal 7, @line_item.variation.quantity_committed
   end
 
   it 'should adjust price based on options' do
@@ -247,7 +247,7 @@ context 'A line item with price adjustment options' do
   
   it 'should decrement available quantity on sale' do
     @line_item.mark_as_sold
-    assert_equal 8, @line_item.product_option_selection.quantity
+    assert_equal 8, @line_item.variation.quantity
   end
   
   it 'should block changing an already set product id' do
@@ -277,19 +277,19 @@ context 'A line item with weight adjustment options' do
                  :has_input => true, :weight_adjustment => 0.10
                )
     
-    @product_option_selection = ProductOptionSelection.new(
+    @variation = Variation.new(
                                   :product => @product,
                                   :quantity => 10,
                                   :quantity_committed => 0
                                 )
 
-    @product_option_selection3 = ProductOptionSelection.new(
+    @variation3 = Variation.new(
                                    :product => @product,
                                    :unlimited_quantity => true,
                                    :quantity_committed => 0
                                  )
-    @product_option_selection3.options << @option3
-    @product_option_selection3.save
+    @variation3.options << @option3
+    @variation3.save
     
     @option_specification3 = OptionSpecification.create!(
                               :option => @option3,
@@ -298,7 +298,7 @@ context 'A line item with weight adjustment options' do
     @line_item_spec3 = LineItem.new(
                         :cart => Cart.new,
                         :product => @product,
-                        :product_option_selection => @product_option_selection3,
+                        :variation => @variation3,
                         :quantity => 2
                       )
     @line_item_spec3.option_specifications << @option_specification3

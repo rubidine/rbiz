@@ -2,7 +2,7 @@
   Your cart is empty.
 <% else -%>
   <%
-  has_options = @cart.line_items.detect{|x| x.product_option_selection}
+  has_options = @cart.line_items.detect{|x| x.variation}
   st_span = has_options ? 4 : 3
   -%>
   <table cellpadding="5" cellspacing="0" border="0">
@@ -39,8 +39,8 @@
         <% if has_options -%>
           <td>
             <%=
-            if i.product_option_selection
-              i.product_option_selection.options.collect do |x|
+            if i.variation
+              i.variation.options.collect do |x|
                 input = i.option_specifications.detect{|y| y.option_id == x.id}
                 if input
                   input = "(#{input.option_text})"

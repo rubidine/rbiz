@@ -7,8 +7,11 @@
   <table>
     <thead>
       <tr>
-        <% @full_matrix.first.each do |opt| -%>
-        <%# set_columns.each do |col| -%>
+        <%
+        first_option = @full_matrix.first
+        first_option.sort! {|a,b| a.option_set_id <=> b.option_set_id}
+        first_option.each do |opt| 
+        -%>
           <th><%= opt.option_set.name %></th>
         <% end -%>
         <th>Quantity / Unlimited</th>
@@ -16,15 +19,19 @@
       </tr>
     </thead>
     <tbody>
-      <% @matrix_entries.each do |possible_selection| 
+      <% @matrix_entries.each do |possible_variation| 
       -%>
         <tr>
-          <% possible_selection.options.each do |option| -%>
+          <% 
+            variation_opts = possible_variation.options
+            variation_opts.sort! {|a,b| a.option_set_id <=> b.option_set_id}
+            variation_opts.each do |option| 
+          -%>
             <td><%= option.name %></td>
           <% end -%>
           <% 
             quantity_object = @matrix_entries.detect{|sel| 
-              possible_selection.options.inject(true){ |m,option| 
+              possible_variation.options.inject(true){ |m,option| 
                 m && sel.option_ids.include?(option.id)
               } 
             }
@@ -36,14 +43,14 @@
                   'style="display:none"'
                 end %>>
                 <%= text_field(
-                  "selection[#{quantity_object.id}]",
+                  "variation[#{quantity_object.id}]",
                   :quantity,
                   :value => quantity_object.quantity,
                   :size => 3
                 ) %>&nbsp;/
               </span>
               <%= check_box(
-                "selection[#{quantity_object.id}]",
+                "variation[#{quantity_object.id}]",
                 :unlimited_quantity,
                 :checked => quantity_object.unlimited_quantity ? 'checked' : '',
                 :onclick => "cart_office_unlimited_quantity(this, #{quantity_object.id})"
@@ -52,7 +59,7 @@
             <td>
               <%= link_to_function(
                 'Update',
-                "cart_office_process_update_option_selection_quantity(
+                "cart_office_process_update_variation_quantity(
                   #{quantity_object.id},
                   \"#{form_authenticity_token}\"
                 )"
@@ -76,7 +83,7 @@
           <td>
             <%= link_to_function(
               "Update All",
-              "cart_office_process_update_all_option_selection_quantity(
+              "cart_office_process_update_all_variation_quantity(
                 \"#{form_authenticity_token}\"
               )"
             ) %>

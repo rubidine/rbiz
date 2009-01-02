@@ -37,7 +37,7 @@ class Product < ActiveRecord::Base
   has_many :tags, :through => :tag_activations
   has_many :tag_sets, :through => :tag_activations
   has_many :option_sets
-  has_many :product_option_selections, :dependent=>:destroy
+  has_many :variations, :dependent=>:destroy
   has_many :quantity_reservations, :as => :reserved_object, :dependent => :destroy
 
   #
@@ -183,7 +183,7 @@ class Product < ActiveRecord::Base
   # The option matrix of a Product is a two-dimensional array that is a listing
   # of every possible distinct tuple of Option elements that can be applied
   # to the current product.  This does not look at inventory or if a
-  # ProductOptionSelection exists for the set of options.
+  # Variation exists for the set of options.
   #
   # Example:
   #   Given option sets "OS1" and "OS2"
@@ -293,7 +293,7 @@ class Product < ActiveRecord::Base
     option_sets.each{|x| option_set_names[x.id] = x.name}
 
     rv = {}
-    product_option_selections.find(:all, :include=>['options']).each do |pos|
+    variations.find(:all, :include=>['options']).each do |pos|
       # record previous options to know how to traverse rv
       popts = []
 
@@ -333,7 +333,7 @@ class Product < ActiveRecord::Base
           rhash
         end
 
-        # if there are no more options, just append the option selection id
+        # if there are no more options, just append the variation id
         curhash[o.name] ||= {}
         curhash[o.name]['children'] ||= (((idx + 1) == sort_opt.length) ? \
                                           pos.id : \
@@ -363,7 +363,7 @@ class Product < ActiveRecord::Base
     effective_on.nil?
   end
 
-  def product_option_selections_for_option_ids option_ids
+  def variations_for_option_ids option_ids
     if option_ids.length > 0
       joins = ""
       where = ""

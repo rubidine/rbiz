@@ -3,4 +3,4 @@ page.replace_html 'option_sets', :partial => 'office/products/product_options'
 page.replace 'option_matrix_selector',
              :partial => 'office/products/product_option_matrix_selector'
 page.replace_html 'option_matrix',
-                 "#{@product.product_option_selections.count} option selections"
+                 "#{@product.variations.count} variations"

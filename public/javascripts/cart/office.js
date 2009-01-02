@@ -151,18 +151,18 @@ cart_office_process_option_delete(option_id, authenticity_token) {
 }
 
 function
-cart_office_process_update_option_selection_quantity(selection_id, auth_token) {
-  var element=  $("selection_" + selection_id + "_quantity");
-  var element_u=  $("selection_" + selection_id + "_unlimited_quantity");
+cart_office_process_update_variation_quantity(variation_id, auth_token) {
+  var element=  $("variation_" + variation_id + "_quantity");
+  var element_u=  $("variation_" + variation_id + "_unlimited_quantity");
   var spin = show_spinner(element);
-  var url = "/office/product_option_selections/" + selection_id;
+  var url = "/office/variations/" + variation_id;
   dispatch(
     url,
     $H({
       parameters: {
         _method: 'put',
-        'product_option_selection[quantity]': $F(element),
-        'product_option_selection[unlimited_quantity]': $F(element_u),
+        'variation[quantity]': $F(element),
+        'variation[unlimited_quantity]': $F(element_u),
         authenticity_token: encodeURIComponent(auth_token)
       },
       spinner: spin
@@ -171,15 +171,15 @@ cart_office_process_update_option_selection_quantity(selection_id, auth_token) {
 }
 
 function
-cart_office_process_update_all_option_selection_quantity(auth_token) {
-  var element = $('all_options_quantity');
+cart_office_process_update_all_variation_quantity(auth_token) {
+  var element = $('all_variations_quantity');
   var value = $F(element);
   $('option_matrix').getElementsBySelector('input[type=text]').each(
     function(x){
       x.value = value;
-      var id = x.getAttribute('id').match(/^selection_(\d+)_quantity$/);
+      var id = x.getAttribute('id').match(/^variation_(\d+)_quantity$/);
       if (id) {
-        cart_office_process_update_option_selection_quantity(id[1], auth_token);
+        cart_office_process_update_variation_quantity(id[1], auth_token);
       }
     }
   );

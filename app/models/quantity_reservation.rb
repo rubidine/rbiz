@@ -1,6 +1,6 @@
 ##
 # A QuantityReservation is built for each copy of a Product
-# (or ProductOptionSelection) a Customer puts in their Cart.
+# (or Variation) a Customer puts in their Cart.
 #
 # This gives an order (by timestamping) that reservations were made in,
 # so if supplies get low, you have reserved yours already.

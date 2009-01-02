@@ -8,8 +8,8 @@ class Office::OptionSetsController < ApplicationController
     @product = Product.find(params[:product_id])
     @option_set = @product.option_sets.create(params[:option_set])
 
-    # all of the old product option selections are now missing a set
-    @product.product_option_selections.clear
+    # all of the old variations are now missing a set
+    @product.variations.clear
   end
 
   def destroy

@@ -13,7 +13,7 @@
 #
 # Options
 # Some products have options that must be chosen by the buyer.  We store
-# a pointer to the ProductOptionSelection that this line item applies to,
+# a pointer to the Variation that this line item applies to,
 # and itterate over its options to check for price adjustments, and the
 # name of the OptionSet and the value of the option are also applied
 # to the sku.
@@ -34,7 +34,7 @@ class LineItem < ActiveRecord::Base
 
   belongs_to :cart
   belongs_to :product
-  belongs_to :product_option_selection
+  belongs_to :variation
   has_many :option_specifications
   has_many :quantity_reservations, :dependent => :destroy
 
@@ -92,7 +92,7 @@ class LineItem < ActiveRecord::Base
   # When the product is set we need to make sure we block changing an already
   # set product id, since you should never change the product a line item is
   # associated with, since the line item tracks the quantity committed on the
-  # Product, and there may be a ProductOptionSelection set that would become
+  # Product, and there may be a Variation set that would become
   # invalid.  We also have to block the quantity.
   def product_id= prod_id
     return if product
@@ -104,7 +104,7 @@ class LineItem < ActiveRecord::Base
   # and block the possiblity of changing an already set product id, since
   # you should never change the product a line item is associated with,
   # since the line item tracks the quantity committed on the Product, and
-  # there may be a ProductOptionSelection set that would become invalid.
+  # there may be a Variation set that would become invalid.
   def product_with_commit_quantity= prod
     return if self.product
     self.product_without_commit_quantity = prod
@@ -127,8 +127,8 @@ class LineItem < ActiveRecord::Base
       base_price = product.price_fixed
 
       # options
-      if product_option_selection
-        base_price += product_option_selection.price_adjustment_fixed
+      if variation 
+        base_price += variation.price_adjustment_fixed
       end
 
       # return
@@ -164,8 +164,8 @@ class LineItem < ActiveRecord::Base
     base = (product.weight || default_weight)
 
     # add option weights in
-    if product_option_selection
-      base += product_option_selection.weight_adjustment
+    if variation
+      base += variation.weight_adjustment
     end
 
     base
@@ -182,8 +182,8 @@ class LineItem < ActiveRecord::Base
   # the sku.
   def full_sku
     rv = custom? ? custom_description : product.sku
-    if product and product_option_selection
-      options = product_option_selection.options.sort_by{|x| x.option_set.sku_extension_order}
+    if product and variation
+      options = variation.options.sort_by{|x| x.option_set.sku_extension_order}
       oo = options.collect do |o|
         if o.sku_extension
           o.sku_extension
@@ -209,9 +209,9 @@ class LineItem < ActiveRecord::Base
   def specification_hash 
     rv = {} 
  
-    return rv unless product and product_option_selection 
+    return rv unless product and variation 
  
-    options = product_option_selection.options_with_specifications 
+    options = variation.options_with_specifications 
     options.each do |o| 
       spec = option_specifications.detect{|s| s.option_id == o.id} 
       rv[o] = spec ? spec.option_text : '' 
@@ -244,7 +244,7 @@ class LineItem < ActiveRecord::Base
   private
 
   #
-  # Set the quantity committed on an option selection or product.
+  # Set the quantity committed on a variation or product.
   # Return true or false based on success.
   #
   def commit_quantity
@@ -337,10 +337,10 @@ class LineItem < ActiveRecord::Base
 
   def quantity_object
     return nil if custom?
-    if product_option_selection && product_option_selection.track_quantity_on_product?
+    if variation && variation.track_quantity_on_product?
       product
     end
-    return nil unless sel = product_option_selection || product
+    return nil unless sel = variation || product
     sel.unlimited_quantity? ? nil : sel
   end
 
