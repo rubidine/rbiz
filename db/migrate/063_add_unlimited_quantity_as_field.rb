@@ -6,11 +6,12 @@ class AddUnlimitedQuantityAsField < ActiveRecord::Migration
     id = Product.find(:all, :conditions => {:quantity => -1}).collect(&:id)
     Product.update_all({:unlimited_quantity => true}, {:id => id})
 
-    id = ProductOptionSelection.find(
+    Variation.set_table_name 'product_option_selections'
+    id = Variation.find(
            :all,
            :conditions => {:quantity => -1}
          ).collect(&:id)
-    ProductOptionSelection.update_all({:unlimited_quantity => true}, {:id => id})
+    Variation.update_all({:unlimited_quantity => true}, {:id => id})
   end
 
   def self.down

@@ -9,7 +9,9 @@ class CreateQuantityReservations < ActiveRecord::Migration
     add_column :line_items, :quantity_reservations_count, :integer, :default => 0
 
     Product.update_all({:quantity_committed => 0})
-    ProductOptionSelection.update_all({:quantity_committed => 0})
+
+    Variation.set_table_name 'product_option_selections'
+    Variation.update_all({:quantity_committed => 0})
 
     LineItem.find(:all, :include => :cart, :conditions => {:'carts.sold_at' => nil}).each do |li|
       li.quantity.times do
