@@ -12,8 +12,8 @@ namespace :cart do
   task :migrate do
     require 'environment'
     ActiveRecord::Base.establish_connection
-    load File.join(File.dirname(__FILE__), '..', 'ext_lib', 'plugin_migrator.rb')
-    ActiveRecord::PluginMigrator.migrate(File.join(File.dirname(__FILE__), '..', 'db', 'migrate'), ENV['VERSION'] ? ENV['VERSION'].to_i : nil)
+    load File.join(File.dirname(__FILE__), '..', 'ext_lib', 'rbiz_migrator.rb')
+    ActiveRecord::RbizMigrator.migrate(File.join(File.dirname(__FILE__), '..', 'db', 'migrate'), ENV['VERSION'] ? ENV['VERSION'].to_i : nil)
   end
 
   desc 'Test the Cart extension.'
