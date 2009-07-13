@@ -33,7 +33,7 @@ while c = @cart_configs.shift
               <% remote_form_for(
                 opt,
                 :update => {:failure => 'ajax_error', :success => '_nothing'},
-                :url => office_cart_config_url(opt),
+                :url => office_cart_configs_url(opt),
                 :failure => "$('ajax_error_container').show();"
               ) do |f| %>
                 <%= config_input(f, opt) %>

@@ -3,26 +3,7 @@ unless defined?(ActionController) and defined?(ActionController::Dispatcher)
   require 'action_controller/dispatcher'
 end
 
-# Routing Extension
-require File.join(File.dirname(__FILE__), 'cart_routing_extension')
-ActionController::Routing::RouteSet.send :include, CartRoutingExtension
-
-# Dependency reload mechanism
-require File.join(File.dirname(__FILE__), 'cart_dependency_extension')
-Dependencies.extend CartDependencyExtension
-
-# Load paths go after rails app's own lib/, before previously loaded plugins
-ali = $LOAD_PATH.index(File.join(RAILS_ROOT, 'lib')) || 0
-paths = [
-  File.join(File.dirname(__FILE__), '..', 'app', 'controllers'),
-  File.join(File.dirname(__FILE__), '..', 'app', 'helpers'),
-  File.join(File.dirname(__FILE__), '..', 'app', 'models'),
-  File.join(File.dirname(__FILE__), '..', 'lib')
-]
-paths.each do |p|
-  $LOAD_PATH.insert(ali + 1, p)
-  Dependencies.load_paths << p
-end
+require File.join(File.dirname(__FILE__), 'rbiz_dependencies')
 
 vp = File.join(File.dirname(__FILE__), '..', 'app', 'views')
 ActionController::Base.prepend_view_path(vp)

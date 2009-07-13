@@ -13,7 +13,7 @@ def find_config_file
   end
 end
 
-desc 'Test the cart plugin.'
+desc 'Test the rbiz plugin.'
 Rake::TestTask.new(:test) do |t|
   conf = find_config_file
   require conf
@@ -32,7 +32,7 @@ end
 desc 'Generate documentation for the cart plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Cart'
+  rdoc.title    = 'RBiz'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')

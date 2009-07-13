@@ -20,80 +20,6 @@ require File.join(directory, 'ext_lib', 'init.rb')
 
 module ::Office ; end
 
-# define some routes
-ActionController::Routing::Routes.define_cart_routes do |map|
-
-  map.connect 'cart/:action/:id', :controller => 'cart'
-  map.connect 'browse/*slugs', :controller => 'cart', :action => 'tag'
-  map.connect 'customer/:action/:id', :controller=>'customer'
-
-  map.connect 'office', :controller => 'office/gateway', :action => 'index'
-
-  map.namespace :office do |office|
-
-    office.resources(
-      :products,
-      :member => {
-        :available => :post,
-        :featured => :post,
-        :duplicate => :get,
-        :tag => :post,
-        :remove_image => :post,
-        :update_matrix => :post
-      },
-      :has_many => [
-        :product_images,
-        :tag_activations,
-        :tags,
-        :tag_sets,
-        :option_sets
-      ]
-    )
-
-    office.resources(
-      :product_images,
-      :member => {
-        :reorder => :post
-      }
-    )
-
-    office.resources(
-      :option_sets,
-      :has_many => [
-        :options
-      ]
-    )
-
-    office.resources :tag_activations
-
-    office.resources(
-      :tag_sets,
-      :has_many => [
-        :tags
-      ]
-    )
-
-    office.resources :tags
-
-    office.resources :options
-
-    office.resources :variations
-
-    office.resources :cart_configs
-
-    office.resources :customers
-
-    office.resources :error_messages
-
-    office.resources :coupons
-
-    office.resources :carts
-
-  end
-#  map.connect 'browse/*slugs', :controller=>'cart', :action=>'tag'
-#  map.connect 'product/:slug', :controller=>'cart', :action=>'product'
-end
-
 # Monkey patch into the core classes.
 #
 # There are two ways to do this, if you are patching into a core class
@@ -107,7 +33,7 @@ end
 # mode) you will need your extension to be reloaded each time the application
 # is reset, so use the hook we provide for you.
 #
-Dependencies.register_cart_extension do
+RbizDependencies.load do
   # to add relationships, validations, etc
   # SomeModel.send :has_many, :my_model
 
@@ -121,7 +47,6 @@ Dependencies.register_cart_extension do
   # SomeModel.send :include, SomeModelCartClassExtension
   # SomeModel.my_mixed_in_method
 
-  require_dependency 'application'
   ApplicationController.send :include, CartOfficeAuthorization
 end
 

@@ -6,24 +6,23 @@ rescue LoadError
   # NO RCOV
 end
 
-namespace :cart do
+namespace :rbiz do
 
-  desc "Run migrations for the Cart extension"
-  task :migrate do
-    require 'environment'
+  desc "Run migrations for the RBiz extension"
+  task :migrate => :environment do
     ActiveRecord::Base.establish_connection
-    load File.join(File.dirname(__FILE__), '..', 'ext_lib', 'rbiz_migrator.rb')
-    ActiveRecord::RbizMigrator.migrate(File.join(File.dirname(__FILE__), '..', 'db', 'migrate'), ENV['VERSION'] ? ENV['VERSION'].to_i : nil)
+    require File.join(File.dirname(__FILE__), '..', 'db', 'rbiz_migrator')
+    RbizMigrator.migrate(File.join(File.dirname(__FILE__), '..', 'db', 'migrate'), ENV['VERSION'] ? ENV['VERSION'].to_i : nil)
   end
 
-  desc 'Test the Cart extension.'
+  desc 'Test the RBiz extension.'
   Rake::TestTask.new(:test) do |t|
     if defined?(RADIANT_ROOT)
       t.ruby_opts << "-r#{File.join(RADIANT_ROOT, 'test', 'test_helper')}"
     else
       t.ruby_opts << "-r#{File.join(RAILS_ROOT, 'test', 'test_helper')}"
     end
-    t.ruby_opts << "-r#{File.join(File.dirname(__FILE__), '..', 'test', 'cart_test_helper')}"
+    t.ruby_opts << "-r#{File.join(File.dirname(__FILE__), '..', 'test', 'rbiz_test_helper')}"
     t.libs << File.join(File.dirname(__FILE__), '..', 'lib')
     t.pattern = File.join(File.dirname(__FILE__), '..', 'test/**/*_test.rb')
     t.verbose = true

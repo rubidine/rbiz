@@ -1,5 +1,4 @@
-<%# form_for @product, :url => office_products_path do |f| %>
-<% form_for @product, :url => office_product_path(@product) do |f| %>
+<% form_for [:office, @product] do |f| %>
   <table>
     <tbody>
       <tr>

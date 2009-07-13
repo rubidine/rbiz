@@ -67,7 +67,7 @@ cart_office_process_image_reorder(image_ul, authenticity_token) {
         $H({
           parameters: "image[position]=" + encodeURIComponent(position++) +
                       "&authenticity_token=" +
-                      encodeURIComponent(authenticity_token),
+                      authenticity_token,
           spinner: spin
         })
       );
@@ -111,7 +111,7 @@ cart_office_process_tag_deactivation(activation_id, authenticity_token) {
     $H({
       parameters: {
         _method: 'delete',
-        authenticity_token: encodeURIComponent(authenticity_token)
+        authenticity_token: authenticity_token
       },
       spinner: spin
     })
@@ -127,7 +127,7 @@ cart_office_process_option_set_delete(option_set_id, authenticity_token) {
     $H({
       parameters: {
         _method: 'delete',
-        authenticity_token: encodeURIComponent(authenticity_token)
+        authenticity_token: authenticity_token
       },
       spinner: spin
     })
@@ -143,7 +143,7 @@ cart_office_process_option_delete(option_id, authenticity_token) {
     $H({
       parameters: {
         _method: 'delete',
-        authenticity_token: encodeURIComponent(authenticity_token)
+        authenticity_token: authenticity_token
       },
       spinner: spin
     })
@@ -163,7 +163,7 @@ cart_office_process_update_variation_quantity(variation_id, auth_token) {
         _method: 'put',
         'variation[quantity]': $F(element),
         'variation[unlimited_quantity]': $F(element_u),
-        authenticity_token: encodeURIComponent(auth_token)
+        authenticity_token: auth_token
       },
       spinner: spin
     })
@@ -234,7 +234,7 @@ cart_office_process_delete_category(category_id, name, authenticity_token) {
       url, 
       $H({ 
         parameters: {
-          "authenticity_token": encodeURIComponent(authenticity_token)
+          "authenticity_token": authenticity_token
         },
         method: 'delete'
       }));
@@ -254,7 +254,7 @@ cart_office_process_tag_reorder(tags_ul, authenticity_token) {
         $H({
           parameters: {
             "tag[position]": encodeURIComponent(position++),
-            "authenticity_token": encodeURIComponent(authenticity_token)
+            "authenticity_token": authenticity_token
           },
           spinner: spin,
           method: 'put'
@@ -290,7 +290,7 @@ cart_office_process_delete_tag(tag_id, name, authenticity_token) {
       url, 
       $H({
         parameters: {
-          "authenticity_token": encodeURIComponent(authenticity_token)
+          "authenticity_token": authenticity_token
         }, 
         method: 'delete'
       }));

@@ -20,8 +20,7 @@
   </ul>
 
   <% remote_form_for(
-    [@product, TagSet.new],
-    :url => office_product_tag_sets_url(@product),
+    [:office, @product, TagSet.new],
     :html => {:id => 'create_tag_set', :style => 'display: none'},
     :update => {:failure => 'ajax_error', :success => '_nothing'},
     :failure => "new Effect.BlindDown('ajax_error_container');new Effect.Highlight('ajax_error');"
@@ -66,7 +65,7 @@
 
   <% form_remote_tag(
     :update => {:failure => 'ajax_error', :success => '_nothing'},
-    :url => office_product_tag_activation_url(@product, TagActivation.new),
+    :url => office_product_tag_activations_url(@product, TagActivation.new),
     :html => {:id => 'activate_tag'},
     :failure => "new Effect.BlindDown('ajax_error_container');new Effect.Highlight('ajax_error');"
   ) do %>

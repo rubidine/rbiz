@@ -205,6 +205,8 @@ class Product < ActiveRecord::Base
       my_option_sets.delete(exclude_set) 
     end
 
+    return [] if my_option_sets.empty?
+
     rv = []
 
     desired_columns = [

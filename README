@@ -1,4 +1,4 @@
-Cart
+RBiz
 ====
 
 Check it out on GitHub (http://github.com/rubidine/rbiz)
@@ -10,8 +10,8 @@ In your Rails project directory
 2. git clone git://github.com/rubidine/unique_tuple.git vendor/plugins/unique_tuple
 3. git clone git://github.com/rubidine/fixed_point_field.git vendor/plugins/fixed_point_field
 4. git clone git://github.com/rails/acts_as_list.git vendor/plugins/acts_as_list
-5. git clone git://github.com/mislav/will_paginate.git vendor/plugins/will_paginate
-6. rake cart:migrate
+5. gem install mislav-will_paginate
+6. rake rbiz:migrate
 7. ???
 8. profit..  no seriously.
 

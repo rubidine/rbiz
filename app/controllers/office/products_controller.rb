@@ -25,7 +25,7 @@ class Office::ProductsController < ApplicationController
     if @product.new_record?
       render :action => 'new'
     else
-      flash :success => 'Product Created'
+      flash[:success] = 'Product Created'
       redirect_to edit_office_product_url(@product)
     end
   end
