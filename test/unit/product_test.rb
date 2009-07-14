@@ -5,6 +5,7 @@ context "A newly created product" do
     Product.delete_all
     OptionSet.delete_all
     Option.delete_all
+
     @default_product_options = {
       :quantity => 7, :name => 'test', :sku => 'test', :price => 7.50,
       :effective_on => (Date.today - 3), :quantity_committed => 0
@@ -51,6 +52,12 @@ end
 context "The Product class" do
   setup do
     CartLib.activate_test_stubs
+
+    Product.delete_all
+    OptionSet.delete_all
+    Option.delete_all
+    Tag.delete_all
+    TagSet.delete_all
 
     @ts1 = TagSet.create!(:name => 'Test Set One', :slug => '1')
     @ts2 = TagSet.create!(:name => 'Test Set Two', :slug => '2')
@@ -104,6 +111,11 @@ end
 context "Any product" do
   setup do
     CartLib.activate_test_stubs
+
+    Product.delete_all
+    OptionSet.delete_all
+    Option.delete_all
+
 
     @p1 = Product.create!(
             :name => '1', :sku => '1', :price => 1, :quantity => 3,

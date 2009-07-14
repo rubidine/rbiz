@@ -2,6 +2,9 @@ context 'A new tag' do
   setup do
     CartLib.activate_test_stubs
 
+    TagSet.delete_all
+    Tag.delete_all
+
     @ts1 = TagSet.create(:name=>'one')
     @t1 = Tag.create!(:tag_set => @ts1, :name => 'tt')
     @t2 = Tag.create!(:tag_set => @ts1, :name => 'tt2')
@@ -30,6 +33,11 @@ end
 
 context 'The Tag class' do
   setup do
+
+    TagSet.delete_all
+    Tag.delete_all
+    Product.delete_all
+
     CartLib.activate_test_stubs
 
     @product = Product.create!(:name=>'1',:sku=>'1',:price=>1,:quantity=>1)

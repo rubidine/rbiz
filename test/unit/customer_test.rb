@@ -1,5 +1,7 @@
 context 'A new customer' do
   setup do
+    Customer.delete_all
+
     CartLib.activate_test_stubs
 
     @customer = Customer.new(
@@ -16,6 +18,7 @@ end
 
 context 'The Customer class' do
   setup do
+    Customer.delete_all
     CartLib.activate_test_stubs
   end
 

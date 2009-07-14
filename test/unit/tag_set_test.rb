@@ -2,6 +2,8 @@ context 'a new tag set' do
   setup do
     CartLib.activate_test_stubs
 
+    TagSet.delete_all
+
     @ts = TagSet.create! :name => 'test'
   end
 

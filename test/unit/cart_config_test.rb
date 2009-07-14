@@ -1,5 +1,6 @@
 context 'A CartConfig' do
   setup do
+    CartConfig.delete_all
     CartConfig.set :test, 'this key/scope exists', :test
   end
 
@@ -101,6 +102,7 @@ end
 
 context 'A Cart Config with a basic type of "Boolean"' do
   setup do
+    CartConfig.delete_all
     cc = CartConfig.new(
       :name => 'test',
       :scope => 'test',
@@ -132,6 +134,7 @@ end
 
 context 'A Cart Config with a basic type of "String"' do
   setup do
+    CartConfig.delete_all
     cc = CartConfig.new(
       :name => 'test',
       :scope => 'test',

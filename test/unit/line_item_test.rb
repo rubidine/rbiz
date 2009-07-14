@@ -1,8 +1,14 @@
 context 'The LineItem class' do
   setup do
-    @product = create_product
-    @customer = create_customer
-    @cart = create_cart(:customer => @customer)
+    Product.delete_all
+    Customer.delete_all
+    LineItem.delete_all
+    Cart.delete_all
+    Address.delete_all
+
+    @product = Factory(:product)
+    @customer = Factory(:customer)
+    @cart = Factory(:cart, {:customer => @customer})
   end
 
   it 'should create valid line item for custom price products' do
@@ -20,7 +26,7 @@ context 'The LineItem class' do
 
   it 'should not create a line item if a product is unavailable' do
     @product.destroy
-    prod = create_product(:effective_on => Date.today + 3)
+    prod = Factory(:product, {:effective_on => Date.today + 3})
     inst = LineItem.create(:product => prod, :quantity => 1, :cart => @cart)
     assert inst.new_record?
   end
@@ -34,9 +40,15 @@ end
 
 context 'Any line item' do
   setup do
-    @cart = create_cart
+    Product.delete_all
+    Customer.delete_all
+    LineItem.delete_all
+    Cart.delete_all
+    Address.delete_all
+
+    @cart = Factory(:cart)
     @line_item = LineItem.new(:cart => @cart, :quantity => 1)
-    @product = create_product
+    @product = Factory(:product)
   end
 
   it 'should fail validation if neither a product or custom price is specified' do
@@ -51,7 +63,7 @@ context 'Any line item' do
 
   it 'should pass validation if a product is specified' do
     @line_item.product = @product
-    assert_valid @line_item
+    assert @line_item.valid?
   end
 
   it 'should pass validation if a custom price is specified' do
@@ -71,6 +83,12 @@ end
 
 context 'A custom line item' do
   setup do
+    Product.delete_all
+    Customer.delete_all
+    LineItem.delete_all
+    Cart.delete_all
+    Address.delete_all
+
     @cart = Cart.new
     @line_item = LineItem.create(
                    :custom_price => 13.50, :quantity => 2, :cart => @cart,
@@ -109,14 +127,20 @@ end
 context 'A product based line item' do
 
   setup do
-    @cart = create_cart
-    @limited_product = create_product(:price => 7.25, :weight => 3.6, 
-                            :quantity => 10)
+    Product.delete_all
+    Customer.delete_all
+    LineItem.delete_all
+    Cart.delete_all
+    Address.delete_all
+
+    @cart = Factory(:cart)
+    @limited_product = Factory(:product, {:price => 7.25, :weight => 3.6,
+                            :quantity => 10})
     @limited_line_item = LineItem.create(
                    :quantity => 2, :product => @limited_product, :cart => @cart
                  )
 
-    @unlimited_product = create_unlimited_product(:price => 7.25)
+    @unlimited_product = Factory(:unlimited_product, {:price => 7.25})
     @unlimited_line_item = LineItem.create(
                              :quantity => 2, :product => @unlimited_product,
                              :cart => @cart
@@ -168,6 +192,12 @@ end
 
 context 'A line item with price adjustment options' do
   setup do
+    Product.delete_all
+    Customer.delete_all
+    LineItem.delete_all
+    Cart.delete_all
+    Address.delete_all
+
     @product = Product.create!(
                  :name => 'test', :quantity => 3, :sku => 't', :price => 30.30,
                  :weight => 4.4
@@ -263,6 +293,12 @@ end
 
 context 'A line item with weight adjustment options' do
   setup do
+    Product.delete_all
+    Customer.delete_all
+    LineItem.delete_all
+    Cart.delete_all
+    Address.delete_all
+
     @product = Product.create!(
                  :name => 'test', :quantity => 3, :sku => 't', :price => 30.30,
                  :weight => 4.4
@@ -313,9 +349,15 @@ end
 
 context 'A line item with no product' do
   setup do
-    @cart = create_cart
+    Product.delete_all
+    Customer.delete_all
+    LineItem.delete_all
+    Cart.delete_all
+    Address.delete_all
+
+    @cart = Factory(:cart)
     @line_item = LineItem.new(:cart => @cart, :quantity => 1)
-    @product = create_product
+    @product = Factory(:product)
   end
 
   it 'should accept a new product by the product id' do

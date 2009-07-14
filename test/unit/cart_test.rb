@@ -1,8 +1,14 @@
 context 'A Cart, in general' do
   setup do
-    @customer = create_customer
-    @cart = create_cart
-    @product = create_product
+    Customer.delete_all
+    Cart.delete_all
+    Address.delete_all
+    Product.delete_all
+    Coupon.delete_all
+
+    @customer = Factory(:customer)
+    @cart = Factory(:cart)
+    @product = Factory(:product)
   end
 
   it 'should return a line item when a product is added' do
@@ -28,13 +34,13 @@ context 'A Cart, in general' do
   end
 
   it 'should NOT add unavailable (expried) products' do
-    p = create_expired_product
+    p = Factory(:expired_product)
     li = @cart.add(p)
     assert_kind_of FalseClass, li, "ADDED EXPIRED PRODUCT #{p.inspect}"
   end
 
   it 'should NOT add unavailable (not on market) products' do
-    p = create_pending_product
+    p = Factory(:pending_product)
     li = @cart.add(p)
     assert_kind_of FalseClass, li
   end
@@ -47,13 +53,19 @@ end
 
 context 'An empty cart, a product with options' do
   setup do 
-    @customer = create_customer
-    @cart = create_cart
-    @product = create_product
-    @product_sel = create_scoped_product
-    @option_set = create_option_set(:product => @product_sel)
-    @option = create_option(:option_set => @option_set)
-    @variation = new_variation(:product => @product_sel)
+    Customer.delete_all
+    Cart.delete_all
+    Address.delete_all
+    Product.delete_all
+    Coupon.delete_all
+
+    @customer = Factory(:customer)
+    @cart = Factory(:cart)
+    @product = Factory(:product)
+    @product_sel = Factory(:scoped_product)
+    @option_set = Factory(:option_set, {:product => @product_sel})
+    @option = Factory(:option, {:option_set => @option_set})
+    @variation = Factory.build(:variation, {:product => @product_sel})
     @variation.options << @option
     @variation.save
   end
@@ -87,9 +99,15 @@ end
 
 context 'A cart with a product' do
   setup do
-    @customer = create_customer
-    @cart = create_cart(:customer => @customer)
-    @product = create_product
+    Customer.delete_all
+    Cart.delete_all
+    Address.delete_all
+    Product.delete_all
+    Coupon.delete_all
+
+    @customer = Factory(:customer)
+    @cart = Factory(:cart, {:customer => @customer})
+    @product = Factory(:product)
     @line = @cart.add(@product)
   end
 
@@ -154,9 +172,15 @@ end
 
 context 'A cart during checkout' do
   setup do
-    @customer = create_customer
-    @cart = create_cart
-    @product = create_product
+    Customer.delete_all
+    Cart.delete_all
+    Address.delete_all
+    Product.delete_all
+    Coupon.delete_all
+
+    @customer = Factory(:customer)
+    @cart = Factory(:cart)
+    @product = Factory(:product)
 
     @cart.stubs(:shipping_price_fixed).returns(1500)
     @cart.shipping_address = Address.create(:state => 'KY')
@@ -196,14 +220,20 @@ end
 
 context 'A cart with a product with options and specifications' do 
   setup do 
-    @customer = create_customer
-    @cart = create_cart(:customer => @customer) 
-    @product = create_product
-    @product_sel = create_scoped_product
-    @option_set = create_option_set(:product => @product_sel)
-    @option = create_option(:option_set => @option_set, :has_input => true)
+    Customer.delete_all
+    Cart.delete_all
+    Address.delete_all
+    Product.delete_all
+    Coupon.delete_all
 
-    @variation = new_variation(:product => @product_sel) 
+    @customer = Factory(:customer)
+    @cart = Factory(:cart, {:customer => @customer})
+    @product = Factory(:product)
+    @product_sel = Factory(:scoped_product)
+    @option_set = Factory(:option_set, {:product => @product_sel})
+    @option = Factory(:option, {:option_set => @option_set, :has_input => true})
+
+    @variation = Factory.build(:variation, {:product => @product_sel})
     @variation.options << @option 
     @variation.save
   end 

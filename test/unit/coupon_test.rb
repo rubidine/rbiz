@@ -1,8 +1,12 @@
 context 'A coupon discounting all of a particular item' do
   setup do
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
     CartLib.activate_test_stubs
 
-    @p = create_product(:name=>'a', :sku=>'a', :price=>17, :unlimited_quantity=>true)
+    @p = Factory(:product, {:name=>'a', :sku=>'a', :price=>17, :unlimited_quantity=>true})
 
     @c = Coupon.new(
            :discount_price => 7,
@@ -14,7 +18,7 @@ context 'A coupon discounting all of a particular item' do
     @c.save!
 
     @crt = Cart.new
-    @not_p = create_product(:name=>'b',:sku=>'b',:price=>20,:unlimited_quantity=>true)
+    @not_p = Factory(:product, {:name=>'b',:sku=>'b',:price=>20,:unlimited_quantity=>true})
   end
 
   specify 'does not apply if product not in cart' do
@@ -53,10 +57,14 @@ end
 
 context 'A coupon discounting max of a particular item' do
   setup do
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
     CartLib.activate_test_stubs
 
-    @p = create_product(:name=>'a', :sku=>'a', :price=>17, :unlimited_quantity=>true)
-    @p1 = create_product(:name=>'b',:sku=>'b',:price=>20,:unlimited_quantity=>true)
+    @p = Factory(:product, {:name=>'a', :sku=>'a', :price=>17, :unlimited_quantity=>true})
+    @p1 = Factory(:product, {:name=>'b',:sku=>'b',:price=>20,:unlimited_quantity=>true})
                                      
     @c = Coupon.new(
            :discount_percent => 100,
@@ -107,9 +115,13 @@ end
 
 context 'A Coupon discounting max_equal_lesser_associated' do
   setup do
-    @p = create_product(:unlimited_quantity => true, :price => 17, :sku => 'a')
-    @p1 = create_product(:name => 'b', :sku => 'b', :price=>20, :unlimited_quantity => true)
-    @p2 = create_product(:name => 'c', :sku => 'c', :price => 12, :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:unlimited_quantity => true, :price => 17, :sku => 'a'})
+    @p1 = Factory(:product, {:name => 'b', :sku => 'b', :price=>20, :unlimited_quantity => true})
+    @p2 = Factory(:product, {:name => 'c', :sku => 'c', :price => 12, :unlimited_quantity => true})
 
     @c = Coupon.new(
            :discount_percent => 100,
@@ -124,7 +136,7 @@ context 'A Coupon discounting max_equal_lesser_associated' do
     @c.associated_products << @p2
     @c.save!
 
-    @crt = create_cart
+    @crt = Factory(:cart)
   end
 
   specify 'is invalid unless marked as having required products' do
@@ -208,8 +220,12 @@ end
 
 context 'A Coupon with double_line' do
   setup do
-    @crt = create_cart
-    @p = create_product
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @crt = Factory(:cart)
+    @p = Factory(:product)
     
     @c = Coupon.new(
            :effective_on => Date.today - 7,
@@ -243,8 +259,12 @@ end
 
 context 'A coupon that requires all' do
   setup do
-    @p = create_product(:name=>'a', :sku=>'a', :price=>1, :unlimited_quantity=>true)
-    @p2 = create_product(:name=>'b', :sku=>'b', :price=>1, :unlimited_quantity=>true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name=>'a', :sku=>'a', :price=>1, :unlimited_quantity=>true})
+    @p2 = Factory(:product, {:name=>'b', :sku=>'b', :price=>1, :unlimited_quantity=>true})
 
     @c = Coupon.new(
             :requires_all => true,
@@ -290,8 +310,12 @@ end
 
 context 'A coupon that requires any product' do
   setup do
-    @p = create_product(:name=>'a', :sku=>'a', :price=>1, :unlimited_quantity => true)
-    @p2 = create_product(:name=>'b', :sku=>'b', :price=>1, :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name=>'a', :sku=>'a', :price=>1, :unlimited_quantity => true})
+    @p2 = Factory(:product, {:name=>'b', :sku=>'b', :price=>1, :unlimited_quantity => true})
 
     @c = Coupon.new(
             :requires_any => true,
@@ -302,7 +326,7 @@ context 'A coupon that requires any product' do
 
     @c.required_products << @p
 
-    @crt = create_cart
+    @crt = Factory(:cart)
   end
   
   it 'fails if there is nothing in the cart' do
@@ -330,9 +354,13 @@ end
 
 context 'Coupon that requires distinct count' do
   setup do
-    @p = create_product(:name => 'a', :sku => 'skua', :price => 1, :unlimited_quantity => true)
-    @p2 = create_product(:name => 'b', :sku => 'skub', :price => 1, :unlimited_quantity => true)
-    @p3 = create_product(:name => 'c', :sku => 'skuc', :price => 1, :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name => 'a', :sku => 'skua', :price => 1, :unlimited_quantity => true})
+    @p2 = Factory(:product, {:name => 'b', :sku => 'skub', :price => 1, :unlimited_quantity => true})
+    @p3 = Factory(:product, {:name => 'c', :sku => 'skuc', :price => 1, :unlimited_quantity => true})
     
     @c = Coupon.new(
             :requires_distinct_count => 2,
@@ -344,7 +372,7 @@ context 'Coupon that requires distinct count' do
     @c.required_products << @p2
     @c.required_products << @p3
 
-    @crt = create_cart
+    @crt = Factory(:cart)
   end
   
   it 'should not apply to an empty cart' do
@@ -373,8 +401,12 @@ end
 
 context 'A coupon that requires a total count' do
   setup do  
-    @p = create_product(:name => 'a', :sku => 'skua', :price => 1, :unlimited_quantity => true)
-    @p2 = create_product(:name => 'b', :sku => 'skub', :price => 1, :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name => 'a', :sku => 'skua', :price => 1, :unlimited_quantity => true})
+    @p2 = Factory(:product, {:name => 'b', :sku => 'skub', :price => 1, :unlimited_quantity => true})
 
     @c = Coupon.new(
         :requires_total_count => 3,
@@ -386,7 +418,7 @@ context 'A coupon that requires a total count' do
     @c.required_products << @p
     @c.required_products << @p2
 
-    @crt = create_cart
+    @crt = Factory(:cart)
     
     @li1 = LineItem.create(:quantity => 3, :product => @p, :cart => @crt)
     @li2 = LineItem.create(:product => @p2, :quantity => 1, :cart => @crt)
@@ -431,8 +463,12 @@ end
 
 context 'A coupon that requires a minimum purchase' do
   setup do  
-    @p = create_product(:name => 'a', :sku => 'skua', :price => 1, :unlimited_quantity => true)
-    @p2 = create_product(:name => 'b', :sku => 'skub', :price => 1, :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name => 'a', :sku => 'skua', :price => 1, :unlimited_quantity => true})
+    @p2 = Factory(:product, {:name => 'b', :sku => 'skub', :price => 1, :unlimited_quantity => true})
 
     @c = Coupon.new(
             :requires_minimum_purchase => 20,
@@ -443,7 +479,7 @@ context 'A coupon that requires a minimum purchase' do
     @c.required_products << @p
     @c.required_products << @p2
 
-    @crt = create_cart
+    @crt = Factory(:cart)
     
     @li1 = LineItem.create(:quantity => 3, :product => @p, :cart => @crt)
     @li2 = LineItem.create(:product => @p2, :quantity => 1, :cart => @crt)
@@ -497,15 +533,19 @@ context 'A coupon that requires a minimum purchase' do
   it "is not triggered on non-required product" do
     @li1.quantity = 1
     @li2.quantity = 2
-    @p3 = create_product(:name=>'c', :sku=>'c', :price=>300, :quantity=>90)
+    @p3 = Factory(:product, {:name=>'c', :sku=>'c', :price=>300, :quantity=>90})
     assert !@c.applies_to?(@crt)
   end
 end
 
 context "A coupon that requires distinct count" do
   setup do
-    @p = create_product(:name=>'a', :sku=>'a', :price=>5)
-    @p2 = create_product(:name=>'b', :sku=>'b', :price=>5)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name=>'a', :sku=>'a', :price=>5})
+    @p2 = Factory(:product, {:name=>'b', :sku=>'b', :price=>5})
 
     @c = Coupon.new(
       :requires_distinct_count => 2,
@@ -513,7 +553,7 @@ context "A coupon that requires distinct count" do
       :effective_on => Date.today - 7
       )
 
-    @crt = create_cart
+    @crt = Factory(:cart)
   end
   
   it 'should not apply to an empty cart' do
@@ -537,8 +577,12 @@ end
 
 context 'A coupon that requires total count and no required products' do
   setup do
-    @p = create_product( :name=>'a', :sku=>'a', :price=>1, :unlimited_quantity => true)
-    @p2 = create_product( :name=>'b', :sku=>'b', :price=>1, :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name=>'a', :sku=>'a', :price=>1, :unlimited_quantity => true})
+    @p2 = Factory(:product, {:name=>'b', :sku=>'b', :price=>1, :unlimited_quantity => true})
 
     @c = Coupon.new(
       :requires_total_count => 2,
@@ -587,8 +631,12 @@ end
 
 context 'A coupon with minimum purchase, no required products' do
   setup do
-    @p = create_product(:name=>'a', :sku=>'a', :price=>5, :unlimited_quantity=>true)
-    @p2 = create_product(:name=>'b', :sku=>'b', :price=>10, :unlimited_quantity=>true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:name=>'a', :sku=>'a', :price=>5, :unlimited_quantity=>true})
+    @p2 = Factory(:product, {:name=>'b', :sku=>'b', :price=>10, :unlimited_quantity=>true})
 
     @c = Coupon.new(
       :requires_minimum_purchase => 20,
@@ -596,7 +644,7 @@ context 'A coupon with minimum purchase, no required products' do
       :effective_on => Date.today - 7
       )
 
-    @crt = create_cart
+    @crt = Factory(:cart)
     @li1 = @crt.line_items.build :product => @p, :quantity => 3
     @li2 = @crt.line_items.build :product => @p2, :quantity => 1
   end
@@ -647,7 +695,11 @@ end
 
 context 'A coupon with applies on all required' do
   setup do
-    @p = create_product(:price => 100, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:price => 100, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :requires_all => true,
@@ -658,7 +710,7 @@ context 'A coupon with applies on all required' do
         )
     @c.required_products << @p
 
-    @crt = create_cart
+    @crt = Factory(:cart)
     @crt.line_items.build :product => @p, :quantity => 1
     
   end
@@ -675,7 +727,7 @@ context 'A coupon with applies on all required' do
   
   it 'should not apply to nonrequired product' do
     @crt.line_items.first.quantity = 2
-    @pppp = create_product(:price => 800, :name => 'z', :sku => 'z', :quantity => 10)
+    @pppp = Factory(:product, {:price => 800, :name => 'z', :sku => 'z', :quantity => 10})
     @crt.line_items.build :product => @pppp
     assert_equal 10000, @c.discount_for_fixed(@crt)
     assert_equal 100.0, @c.discount_for(@crt)
@@ -684,8 +736,12 @@ end
 
 context 'A coupon with All Assciated' do
   setup do
-    @p3 = create_product( :price => 10, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true)
-    @p4 = create_product( :price => 20, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p3 = Factory(:product, {:price => 10, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true})
+    @p4 = Factory(:product, {:price => 20, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :applies_all_associated => true,
@@ -713,7 +769,11 @@ end
 
 context 'A couple with applies_total' do
   setup do
-    @p4 = create_product( :price => 20, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p4 = Factory(:product, {:price => 20, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :applies_total => true,
@@ -743,8 +803,12 @@ end
 
 context 'A coupon with applies_max_required' do
   setup do
-    @p = create_product( :price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true)
-    @p2 = create_product( :price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true})
+    @p2 = Factory(:product, {:price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :requires_all => true,
@@ -771,8 +835,12 @@ end
   
 context 'A coupon with applies_max_associated' do
   setup do
-    @p3 = create_product( :price => 30, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true)
-    @p4 = create_product( :price => 60, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p3 = Factory(:product, {:price => 30, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true})
+    @p4 = Factory(:product, {:price => 60, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :applies_max_associated => true,
@@ -798,9 +866,13 @@ end
 
 context 'A coupon with applies_max_equal_lesser_required' do
   setup do
-    @p = create_product( :price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true)
-    @p2 = create_product( :price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true)
-    @p3 = create_product( :price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true})
+    @p2 = Factory(:product, {:price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true})
+    @p3 = Factory(:product, {:price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :requires_any => true,
@@ -839,11 +911,15 @@ end
 
 context 'A coupon with applies_max_equal_lesser_associated' do
   setup do
-    @p = create_product( :price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true)
-    @p2 = create_product( :price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true)
-    @p3 = create_product( :price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true})
+    @p2 = Factory(:product, {:price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true})
+    @p3 = Factory(:product, {:price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true})
     
-    @rp = create_product( :price => 60, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true)
+    @rp = Factory(:product, {:price => 60, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :requires_any => true,
@@ -894,11 +970,15 @@ end
 
 context 'A coupon with :applies_max_equal_lesser_other' do
   setup do
-    @p = create_product( :price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true)
-    @p2 = create_product( :price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true)
-    @p3 = create_product( :price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true})
+    @p2 = Factory(:product, {:price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true})
+    @p3 = Factory(:product, {:price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true})
     
-    @rp = create_product( :price => 60, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true)
+    @rp = Factory(:product, {:price => 60, :sku => 'asdf4', :name => 'sdf4', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :requires_any => true,
@@ -944,9 +1024,13 @@ end
 
 context 'A coupon with applies to shipping' do
   setup do
-    @p = create_product( :price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true)
-    @p2 = create_product( :price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true)
-    @p3 = create_product( :price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true})
+    @p2 = Factory(:product, {:price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true})
+    @p3 = Factory(:product, {:price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :requires_any => true,
@@ -977,9 +1061,13 @@ end
 
 context 'A coupon' do
   setup do
-    @p = create_product( :price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true)
-    @p2 = create_product( :price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true)
-    @p3 = create_product( :price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true)
+    Cart.delete_all
+    Coupon.delete_all
+    Product.delete_all
+
+    @p = Factory(:product, {:price => 70, :sku => 'asdf', :name => 'sdf', :unlimited_quantity => true})
+    @p2 = Factory(:product, {:price => 50, :sku => 'asdf2', :name => 'sdf2', :unlimited_quantity => true})
+    @p3 = Factory(:product, {:price => 20, :sku => 'asdf3', :name => 'sdf3', :unlimited_quantity => true})
 
     @c = Coupon.new(
           :requires_any => true,
@@ -996,8 +1084,9 @@ context 'A coupon' do
     @crt = Cart.new(:shipping_price_fixed => 1500)
     @li = @crt.line_items.build :product => @p1, :quantity => 1
     @li2 = @crt.line_items.build :product => @p2, :quantity => 1
-     @li3 = @crt.line_items.build :product => @p3, :quantity => 1
+    @li3 = @crt.line_items.build :product => @p3, :quantity => 1
   end
+
   it 'should apply to empty cart' do
     puts @c.create_double_lines_for @crt 
     #assert_equal , []
